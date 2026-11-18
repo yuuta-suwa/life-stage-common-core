@@ -2,6 +2,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { publicEnv } from "@/lib/env";
+import { supabaseCookieOptions } from "./cookie-options";
 
 /**
  * サーバー用 Supabase クライアント（利用者本人のセッションで動作し、RLS が適用される）。
@@ -11,6 +12,7 @@ export async function createClient() {
   const cookieStore = await cookies();
   const { url, key } = publicEnv();
   return createServerClient(url, key, {
+    cookieOptions: supabaseCookieOptions,
     cookies: {
       getAll() {
         return cookieStore.getAll();

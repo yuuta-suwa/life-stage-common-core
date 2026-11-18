@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isProtectedPath } from "@/lib/paths";
+import { supabaseCookieOptions } from "./cookie-options";
 
 /**
  * セッション更新（Supabase 公式推奨：proxy で getClaims によりトークン検証・更新）。
@@ -13,6 +14,7 @@ export async function updateSession(request: NextRequest) {
   if (!url || !key) return response;
 
   const supabase = createServerClient(url, key, {
+    cookieOptions: supabaseCookieOptions,
     cookies: {
       getAll() {
         return request.cookies.getAll();
