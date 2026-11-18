@@ -2,7 +2,7 @@
 
 ## 1分で把握
 - 何か：LIFE STAGE APP01〜03（＋将来アプリ）共通の招待制アクセス基盤と共通DB。
-- どこ：`life-stage-core/`（このリポジトリ内の独立 Next.js プロジェクト。親ディレクトリの既存イベント管理アプリとは無関係）。
+- どこ：専用リポジトリ `yuuta-suwa/life-stage-common-core`（Next.js プロジェクト）。
 - 状態：ローカル実DBで自動テスト84件合格。**Supabase/Vercel の STG は未構築**（承認待ち）。完成ではない。
 - 最重要原則：**権限の正本は DB**。書き込みは SECURITY DEFINER RPC のみ、全テーブル RLS、管理操作は aal2、アプリは secret キーを使わない。
 

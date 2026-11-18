@@ -4,7 +4,7 @@
 
 | ID | 日付 | 判断 | 理由 / 根拠 | 状態 |
 |---|---|---|---|---|
-| D-01 | 2026-11-18 | 共通基盤を既存リポジトリ `event-management-system` 内の独立ディレクトリ `life-stage-core/`（独自 package/lockfile/tsconfig）に実装 | 書き込み可能なリポジトリがこれのみ。既存イベント管理アプリとはコード・依存・ビルドを共有しない。既存側は `tsconfig`/`eslint`/`vitest` の除外設定3行のみ変更（機能変更なし、既存テスト45件合格を確認） | **移設予定**（D-21）。履歴付きの切り出しブランチを作成済み |
+| D-01 | 2026-11-18 | 共通基盤を既存リポジトリ `event-management-system` 内の独立ディレクトリ `life-stage-core/`（独自 package/lockfile/tsconfig）に実装 | 書き込み可能なリポジトリがこれのみ。既存イベント管理アプリとはコード・依存・ビルドを共有しない。既存側は `tsconfig`/`eslint`/`vitest` の除外設定3行のみ変更（機能変更なし、既存テスト45件合格を確認） | **移設完了**（2026-11-18、専用リポジトリ `yuuta-suwa/life-stage-common-core` へ履歴ごと移設。公開範囲は発注者判断で public のまま。D-31） |
 | D-02 | 2026-11-18 | 権限判定はすべて DB の現在状態（profiles.status / admin_roles / app_entitlements / admin_user_scopes / mentor_assignments）で行い、JWT の user_metadata・app_metadata は使わない | Ver1.1「ユーザーが変更できるメタデータを権限判定に使用しない」、SPEC §7「JWT内の古い権限情報だけで判定しない」 | 確定 |
 | D-03 | 2026-11-18 | 例外として認証強度（aal1/aal2）は Supabase Auth が署名した JWT の `aal` クレームで判定 | 利用者が改変できないサーバー発行値。Supabase MFA の公式方式 | 確定 |
 | D-04 | 2026-11-18 | テーブルへの直接書き込みは全面禁止。書き込みは SECURITY DEFINER RPC（冒頭で権限・MFA を検証し監査ログを記録）からのみ | 「UIの非表示だけで制限しない」「全保護APIでサーバー側認可」「管理者操作は監査必須」を DB 層で強制 | 確定 |
@@ -39,3 +39,4 @@
 | D-28 | 2026-11-18 | LIFE STAGE 3.0 と APP03 MAKE IT REAL は**別アプリ**として扱う。LIFE STAGE 3.0 はアプリ登録マスターに登録しない | 発注者回答（条件6）。Q-13 は解決 | 確定 |
 | D-29 | 2026-11-18 | Supabase Advisors の WARN「ログイン利用者が SECURITY DEFINER 関数を実行できる」（29件）は**設計上の意図として受容** | 書き込みを RPC に限定し、各関数の冒頭で本人状態・管理者権限・MFA を DB で検証する設計。関数ごとの拒否テストあり | 確定 |
 | D-30 | 2026-11-18 | 旧 Supabase「LIFE STAGE Apps」は削除しない。再開は発注者承認後に1回のみ（記録・バックアップ後に再休止） | 発注者条件7 | 承認待ち（R-02） |
+| D-31 | 2026-11-18 | 専用リポジトリは発注者判断で **public のまま**運用する（承認条件の private から変更） | 2026-11-18 発注者回答。コード・資料に秘密情報を含めない運用（`.env*` は gitignore、`check:bundle`）を継続。識別子（プロジェクト ref 等）も資料に書かない | 確定 |

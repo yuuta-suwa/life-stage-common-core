@@ -3,7 +3,7 @@
 LIFE STAGE APP01（THE FINAL DISCOVERY）・APP02（SELF-REALIZATION ENGINE）・APP03（MAKE IT REAL）共通の
 **招待制 認証・アクセス権・データベース基盤**です。
 
-> このディレクトリは独立したプロジェクトです。親ディレクトリの「イベント管理システム」とはコード・依存関係・ビルドを共有しません。
+> 専用リポジトリ `yuuta-suwa/life-stage-common-core`。2026-11-18 に `event-management-system` の作業ブランチ（`life-stage-core/`）から履歴ごと移設しました。
 
 ## 状態（2026-11-18）
 - 共通認証・招待制・アプリ別権限・管理画面・共通DB・アプリ登録マスターを実装（自動テスト 97 件合格）。
@@ -25,7 +25,6 @@ Next.js 16（App Router, `proxy.ts`）／TypeScript／Supabase Auth（Google OAu
 必要：Node.js 22+、pnpm、PostgreSQL 15+（ローカル検証用）
 
 ```bash
-cd life-stage-core
 pnpm install
 pnpm db:local:start   # ローカルDB（Supabase互換シム＋マイグレーション）
 pnpm test             # 単体＋実DBセキュリティテスト

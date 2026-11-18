@@ -1,11 +1,11 @@
 # CLAUDE.md｜LIFE STAGE COMMON CORE 開発ルール
 
-このファイルは `life-stage-core/` 配下で作業する AI エージェント・開発者向けの指示です。
+このファイルは本リポジトリで作業する AI エージェント・開発者向けの指示です。
 
 ## 前提
 - Next.js は 16 系（Middleware ではなく `src/proxy.ts`、`params`/`searchParams`/`cookies()` は Promise）。コードを書く前に `node_modules/next/dist/docs/` の該当ガイドを確認する。
 - Supabase は `@supabase/ssr`、publishable key、`getClaims()` を使う。最新の公式ドキュメントを確認してから実装を変える。
-- 親ディレクトリ（イベント管理システム）は別アプリ。**変更しない**。
+- 既存アプリ（イベント管理システム、LIFE STAGE 2.0/3.0、LEI APP HUB）と旧 Supabase「LIFE STAGE Apps」は**変更・削除しない**。
 
 ## 作業開始時に読む
 `docs/PROGRESS.md` → `docs/TODO.md` → `docs/DECISIONS.md` → 変更対象に関係する docs。

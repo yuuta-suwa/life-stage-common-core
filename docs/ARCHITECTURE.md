@@ -54,7 +54,7 @@ UI・API の判定が何らかの理由ですり抜けても、DB 層で同じ�
 ## ディレクトリ
 
 ```
-life-stage-core/
+life-stage-common-core/（リポジトリルート）
   src/
     proxy.ts                   セッション更新
     app/                       画面・API（admin/*, api/*, invite/*, account, apps/[code], login, status）
