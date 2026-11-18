@@ -1,5 +1,13 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-18（4）｜検証環境の構築と認証設定
+- 専用リポジトリ `yuuta-suwa/life-stage-common-core` へ履歴ごと移設（発注者判断で public）。
+- Vercel 検証環境 `https://life-stage-common-core.vercel.app`（東京 hnd1、main 自動デプロイ）を作成。
+- Supabase Auth：Site URL・Redirect URLs を設定、メール認証を無効化（管理API経由）。Google 有効・TOTP 有効を確認。
+- 自動検証：未ログイン時の保護（ページ→/login、API→401）、ログイン→Supabase 認可（PKCE）→Google ログイン画面（エラーなし）を iPhone/iPad/PC プロファイルで確認。横はみ出しなし。
+- 修正：セッション Cookie に Secure 属性が付いていなかった（@supabase/ssr の既定）→ 本番で Secure を付与。
+- 未実施：実 Google アカウントでのログイン・MFA 登録・実機確認（docs/STG_VERIFICATION.md の手順で発注者・テスト担当者が実施）。
+
 ## 2026-11-18（3）｜STEP 01 承認後の開発（案C）
 
 ### 実装済み

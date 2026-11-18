@@ -5,11 +5,12 @@
 |---|---|---|
 | R-01 | ~~Supabase 開発プロジェクトの作成~~ | **完了**：`life-stage-common-core-dev`（東京・Free）を作成、migration 適用済み |
 | R-02 | 休止中の Supabase「LIFE STAGE Apps」を**90日の復旧期限内に**一度だけ再開し、構成記録・バックアップ取得後に再休止してよいか | 期限後はワンクリック復旧不可。再開は外部状態の変更（データは変更しない） |
-| R-03 | Vercel に共通基盤 STG 用プロジェクトを作成（専用リポジトリに接続） | 承認済み（試験運用環境）。リポジトリ作成待ち。本番公開は別途承認 |
-| R-04 | 共通基盤を専用 private リポジトリへ移設 | 承認済み。**R-08 のリポジトリ作成待ち** |
+| R-03 | ~~Vercel STG~~ | **完了**：`https://life-stage-common-core.vercel.app` |
+| R-04 | ~~専用リポジトリへ移設~~ | **完了**（public。D-31） |
 | R-08 | GitHub に**空の private リポジトリ**を作成（推奨名：`yuuta-suwa/life-stage-common-core`、README 等は作らない）し、このセッションから push できるよう Claude GitHub App の対象に追加 | このセッションは新規リポジトリを作成できないため |
-| R-05 | Google Cloud で OAuth クライアント作成（または作成者の指定） | 秘密情報の登録 |
-| R-06 | 初期 Super Admin の Google アカウント（メール）の指定 | 初期管理者の作成 |
+| R-05 | ~~Google OAuth クライアント~~ | **完了**（発注者が登録。設定は自動確認済み） |
+| R-06 | 初期 Super Admin の Google アカウント（メール）の指定 | 指定後に招待リンクを発行（STG_VERIFICATION §1） |
+| R-09 | 実ログイン検証（STG_VERIFICATION §2〜§5）の実施 | 実在の Google アカウントと実機が必要 |
 | R-07 | 試験運用のテスト利用者5名（Admin1・Mentor1・User2 ＋ Super Admin） | Phase 6 |
 
 ## 発注者確認事項（未決）
