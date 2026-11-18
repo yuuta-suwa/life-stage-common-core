@@ -89,7 +89,7 @@ pnpm dev              # Supabase 接続先がない場合はトップに設定�
 | migration | `supabase/migrations` の9本を適用済み（`supabase/local/` のシムは未適用） |
 | 実DB検証 | 権限の静的検査・ロールバック方式の受入シナリオとも合格（TEST_PLAN §4） |
 | Auth 設定 | **未設定**（下記 7-1 をダッシュボードで実施。Google OAuth のクライアントシークレット登録を伴うため発注者側の操作） |
-| Vercel | 未作成（専用 private リポジトリ作成後に接続） |
+| Vercel | 検証環境プロジェクト `life-stage-common-core`（チーム GMPDCASP、GitHub `yuuta-suwa/life-stage-common-core` の main を自動デプロイ、関数地域 hnd1＝東京）。URL：`https://life-stage-common-core.vercel.app`。Vercel 認証保護はプレビュー版のみ（検証URLは招待者がアクセスできるよう保護なし。アプリ自体は招待制・noindex）|
 | 利用者データ | なし（検証データはすべてロールバック済み） |
 
 ### 7-1. ダッシュボードで行う残りの設定（発注者または指定担当者）
