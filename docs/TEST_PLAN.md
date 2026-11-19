@@ -15,7 +15,7 @@ pnpm lint && pnpm typecheck && pnpm build && pnpm check:bundle
 | L1 ローカル実DB | PostgreSQL 16 ＋ Supabase Auth/Storage 互換シム。**Supabase 旧既定（public の新規テーブル・関数を anon/authenticated へ自動 GRANT）を再現**した上で migration を適用 | ✅ 実施 |
 | L2 単体 | アクセス判定、API の認可・CSRF（Supabase モック）、連携契約、共通ライブラリ | ✅ 実施 |
 | L3 実 Supabase（DB） | 開発プロジェクト（東京）に migration 9本を適用。権限・RLS の静的検査＋主要シナリオを**1トランザクションで実行し全件ロールバック** | ✅ 実施 |
-| L4 実 Supabase ＋ 実 Google ＋ Vercel（画面） | 招待リンク→Google ログイン→受諾、管理画面・MFA の実操作 | ❌ 未実施（Google OAuth 設定・Vercel STG・専用リポジトリ待ち） |
+| L4 実 Supabase ＋ 実 Google ＋ Vercel（画面） | 招待リンク→Google ログイン→受諾、管理画面・MFA の実操作 | 🟡 一部実施：Super Admin の招待受諾・Google ログイン・TOTP 登録（aal2）を確認。他の項目は保留（docs/STG_VERIFICATION.md） |
 | L5 試験運用（5名） | TEST_PLAN §6 | ❌ 未実施（L4 の後） |
 
 ## 3. 自動テスト結果（2026-11-18）
@@ -73,7 +73,7 @@ pnpm lint && pnpm typecheck && pnpm build && pnpm check:bundle
 | AT | 内容 | 自動 | 実DB | 画面（STG） |
 |---|---|:-:|:-:|:-:|
 | AT01 | 未招待拒否 | ✅ | ✅ | 未 |
-| AT02 | 招待本人登録 | ✅ | ✅ | 未 |
+| AT02 | 招待本人登録 | ✅ | ✅ | ✅（Super Admin で確認。一般利用者は保留） |
 | AT03 | 期限切れ拒否 | ✅ | — | 未 |
 | AT04 | 取消拒否 | ✅ | — | 未 |
 | AT05 | APP別権限 | ✅ | ✅ | 未 |
