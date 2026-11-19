@@ -20,7 +20,8 @@ const url = (db: string) => ADMIN_URL.replace(/\/[^/]*$/, `/${db}`);
 const TABLES = ["apps", "profiles", "admin_roles", "admin_user_scopes", "mentor_assignments", "invitations", "invitation_apps",
   "app_entitlements", "consent_records", "data_shares", "app_snapshots", "data_transfers", "transfer_inbox",
   "deletion_requests", "app_settings", "audit_logs",
-  "app_role_definitions", "user_app_roles", "app_snapshot_types", "transfer_routes"];
+  "app_role_definitions", "user_app_roles", "app_snapshot_types", "transfer_routes",
+  "app01_stage_answers", "app01_stage_history", "app01_feedback"];
 
 async function fingerprint(db: string) {
   const c = new Client({ connectionString: url(db) });
