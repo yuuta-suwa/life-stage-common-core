@@ -58,3 +58,7 @@ STG／本番の構築手順・管理者マニュアル：[docs/OPERATIONS.md](do
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | 環境構築・**管理者操作マニュアル**・バックアップ・インシデント |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | 設計判断・資料間の差異 |
 | [docs/PROGRESS.md](docs/PROGRESS.md) / [docs/TODO.md](docs/TODO.md) / [docs/HANDOVER.md](docs/HANDOVER.md) | 進捗 / 未完了 / 引き継ぎ |
+| [docs/APP01.md](docs/APP01.md) | APP01 実装状況・仕様書 v7 との照合 |
+| [docs/APP01_TEST_CHECKLIST.md](docs/APP01_TEST_CHECKLIST.md) | APP01 動作確認項目・結果・E2E 実行方法 |
+| [docs/TRIAL_READINESS.md](docs/TRIAL_READINESS.md) | 5名試験公開の可否判定・Vercel 運用案 |
+| [docs/BACKUP_RUNBOOK.md](docs/BACKUP_RUNBOOK.md) | 週1回バックアップの運用手順 |

@@ -1,5 +1,11 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-19（3）｜APP01 試験公開前の最終検証
+- ① 動作確認項目 33件を整理（docs/APP01_TEST_CHECKLIST.md）。
+- ② ローカル Supabase 実スタック＋ブラウザ E2E **32/32 合格**。実 Supabase でロールバック検証 **20/20 合格**（残存データ 0）。実 Google での確認は未実施（発注者）。
+- ③ 不具合 7件を修正（ログアウト不可視、スマホヘッダー、自動保存の取りこぼし、LEVEL10 の中途半端な確定、エラー表示位置、BLUEPRINT の要再確認漏れ、バックアップ復元の失敗）。自動テスト 119件・E2E 32件・lint・型・ビルド・秘密鍵検査に合格。
+- ④ 仕様書 v7 と照合（docs/APP01.md §3）。⑤ docs/BACKUP_RUNBOOK.md。⑥⑦ docs/TRIAL_READINESS.md：**技術面は合格、5名の限定試験は条件付きで可**（C-1〜C-5）。
+
 ## 2026-11-19（2）｜APP01 THE FINAL DISCOVERY
 - 実装：オンボーディング、ホーム（XP・バッジ・10ステージ）、LEVEL01〜10（自動保存・確定・要再確認・STAGE CLEAR）、未来家計簿の自動計算、ビジョンボード（非公開 Storage）、整合性レポート＋チェックリスト、MY LIFE DISCOVERY、MY LIFE BLUEPRINT 作成（life_blueprint 1.0）、最終メッセージ（原文）、APP02 引き継ぎ・再試行、共有（項目選択・プレビュー・文章・印刷PDF）・撤回・フィードバック。詳細 docs/APP01.md。
 - DB：migration 0010（回答・確定履歴・フィードバック、RPC 4本）を開発 Supabase に適用。

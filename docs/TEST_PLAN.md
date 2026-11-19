@@ -122,5 +122,11 @@ pnpm lint && pnpm typecheck && pnpm build && pnpm check:bundle
 14. `scripts/backup.sh backup`→`verify`（AT20）。
 15. iPad（横・縦）・PC・スマホで各画面の表示崩れがないこと。
 
+## 6-2. APP01 試験公開前検証（2026-11-19）
+- ブラウザ E2E（`tests/e2e/app01.e2e.mjs`、ローカル Supabase 実スタック）：32/32 合格。
+- 実 Supabase ロールバック検証（`supabase/verify/app01_general_user_check.sql`）：20/20 合格。
+- 項目一覧と実行方法：docs/APP01_TEST_CHECKLIST.md。判定：docs/TRIAL_READINESS.md。
+- AT20 バックアップ：`backup.sh` の復元手順をローカルで再検証し、空の DB への復元失敗を修正（BACKUP_RUNBOOK §9）。
+
 ## 7. 合格基準
 AT01〜AT20 の自動・実DB・画面とも全件合格、Critical/High の権限不備 0 件、管理者操作マニュアルと引き継ぎ資料が完成していること。
