@@ -9,8 +9,8 @@
 | R-04 | ~~専用リポジトリへ移設~~ | **完了**（public。D-31） |
 | R-08 | GitHub に**空の private リポジトリ**を作成（推奨名：`yuuta-suwa/life-stage-common-core`、README 等は作らない）し、このセッションから push できるよう Claude GitHub App の対象に追加 | このセッションは新規リポジトリを作成できないため |
 | R-05 | ~~Google OAuth クライアント~~ | **完了**（発注者が登録。設定は自動確認済み） |
-| R-06 | 初期 Super Admin の Google アカウント（メール）の指定 | 指定後に招待リンクを発行（STG_VERIFICATION §1） |
-| R-09 | 実ログイン検証（STG_VERIFICATION §2〜§5）の実施 | 実在の Google アカウントと実機が必要 |
+| R-06 | ~~初期 Super Admin~~ | **完了**（2026-11-19 登録・MFA 登録済み） |
+| R-09 | 実ログイン検証の残り（STG_VERIFICATION「実施状況」の保留項目） | **保留**（発注者指示）。テスト用 Google アカウントと実機が必要 |
 | R-07 | 試験運用のテスト利用者5名（Admin1・Mentor1・User2 ＋ Super Admin） | Phase 6 |
 
 ## 発注者確認事項（未決）

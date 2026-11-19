@@ -1,5 +1,9 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-19｜実ログイン検証（一部）
+- 初期 Super Admin（発注者アカウント）を招待リンクで登録。Google ログイン・招待受諾・TOTP 登録・二段階認証済みセッション（aal2）を DB で照合し合格。
+- 残りの実ログイン検証（一般利用者・未招待者・停止/再開・誤コード・重要操作・iPhone/iPad 実機）は発注者指示により**保留**。
+
 ## 2026-11-18（4）｜検証環境の構築と認証設定
 - 専用リポジトリ `yuuta-suwa/life-stage-common-core` へ履歴ごと移設（発注者判断で public）。
 - Vercel 検証環境 `https://life-stage-common-core.vercel.app`（東京 hnd1、main 自動デプロイ）を作成。
