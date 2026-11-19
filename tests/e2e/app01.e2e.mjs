@@ -236,6 +236,31 @@ async function main() {
     await shot(p, "08-home-9cleared");
   });
 
+  await step("LEVEL03：ChatGPT 投げ込みガイド（優先願望を引用した文章をコピーでき、スマホでもはみ出さない）", async () => {
+    for (const vp of [{ width: 1280, height: 900 }, { width: 390, height: 844 }]) {
+      const ctx = await loginContext(browser, USER, { viewport: vp });
+      await ctx.grantPermissions(["clipboard-read", "clipboard-write"], { origin: env.base });
+      const p = await ctx.newPage();
+      await p.goto("/apps/APP01/level/3");
+      await p.locator(".vision-guide summary").click();
+      const desire = await p.locator("#vg-desire").inputValue();
+      expect(desire.startsWith("確定 L1"), `LEVEL01 の優先願望が初期値になっていません：${desire}`);
+      await p.selectOption("#vg-style", "watercolor");
+      await p.fill("#vg-scene", "朝日の差し込むリビング");
+      const prompt = await p.locator(".vision-guide .share-preview").innerText();
+      expect(prompt.includes("■ 叶えたい願望：確定 L1") && prompt.includes("朝日の差し込むリビング") && prompt.includes("水彩画"), "文章に入力が反映されていません");
+      await p.getByRole("button", { name: "文章をコピー" }).click();
+      const clip = await p.evaluate(() => navigator.clipboard.readText());
+      expect(clip === prompt, "コピーされた文章がプレビューと一致しません");
+      expect(await p.getByRole("link", { name: /ChatGPT を開く/ }).getAttribute("rel") === "noopener noreferrer", "外部リンクの rel が不正");
+      const over = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(over <= 1, `${vp.width}px で ${over}px はみ出し`);
+      await p.locator(".vision-guide").screenshot({ path: path.join(SHOTS, `06b-vision-guide-${vp.width}.png`) });
+      // ガイドを開いただけでは回答は変わらない（アプリから外部へ何も送らない）
+      await ctx.close();
+    }
+  });
+
   await step("LEVEL02 の自動計算（未入力≠0、月額×12＋年間）", async () => {
     const p = await user.newPage();
     await p.goto("/apps/APP01/level/2");
@@ -396,7 +421,7 @@ async function main() {
     await p.getByRole("button", { name: /APP02/ }).first().click();
     await p.waitForURL(/transfer=|error=/);
     const html = await p.content();
-    expect(html.includes("引き継ぎが完了していません") && html.includes("APP01 の人生設計はそのまま保存されています"), `失敗時表示が想定外（${p.url()}）`);
+    expect(html.includes("人生設計は保存されています。APP02 への引き継ぎを再試行してください。"), `失敗時表示が想定外（${p.url()}）`);
     expect(html.includes("APP02 の利用権限がまだ付与されていません"), "権限不足の理由が表示されていません");
     await shot(p, "15-handoff-failed");
     const [{ n }] = await sql("select count(*)::int n from public.app_snapshots where user_id=$1", [ids[USER]]);

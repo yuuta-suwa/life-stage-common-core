@@ -241,3 +241,7 @@ dl.answers dd { margin: 2px 0 0; white-space: pre-wrap; word-break: break-word; 
   .narrow, .app01-main { max-width: none; padding: 0; }
   .discovery-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* LEVEL03 ChatGPT 投げ込みガイド */
+.vision-guide summary { cursor: pointer; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.vision-guide .guide-steps { margin: 12px 0; padding-left: 20px; line-height: 1.8; }

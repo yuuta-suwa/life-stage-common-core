@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { messageFor } from "@/lib/errors";
 import { confirmStage, saveDraft } from "@/app/apps/APP01/actions";
 import { COPY } from "./copy";
+import { VisionChatGptGuide } from "./vision-guide";
 import type { StageDef, StageInput } from "./stages";
 import { BUDGET_ASSUMPTION, budgetSummary, hasAnyAnswer, visionImages, yenText, type Answers, type StageState, type VisionImage } from "./logic";
 
@@ -274,6 +275,7 @@ function VisionBoard({ answers, set, userId, imageUrls, desires }: {
 
   return (
     <div>
+      <VisionChatGptGuide desires={desires} />
       <div className="card">
         <label className="btn ghost" style={{ cursor: "pointer" }}>
           ＋ 画像を追加

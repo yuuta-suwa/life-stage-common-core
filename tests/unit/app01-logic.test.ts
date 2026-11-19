@@ -144,3 +144,23 @@ describe("hasAnyAnswer（未入力のまま確定させない）", () => {
     expect(hasAnyAnswer({ q1: "yes" })).toBe(true);
   });
 });
+
+describe("visionPrompt（LEVEL03 ChatGPT 投げ込みガイド）", () => {
+  it("願望・雰囲気・条件（文字なし・実在人物に見せない・4:5）を含み、改行を潰して長さを制限する", async () => {
+    const { visionPrompt } = await import("@/features/app01/logic");
+    const p = visionPrompt({ desire: "家族で海の見える家に\n暮らす", style: "watercolor", scene: "x".repeat(500) });
+    expect(p).toContain("■ 叶えたい願望：家族で海の見える家に 暮らす");
+    expect(p).toContain("水彩画");
+    expect(p).toContain("4:5");
+    expect(p).toContain("文字・ロゴ・透かしを入れない");
+    expect(p).toContain("実在の特定の人物に見えない");
+    expect(p).toContain("x".repeat(200));
+    expect(p).not.toContain("x".repeat(201));
+  });
+  it("未入力の項目は既定の文言で補い、願望が空なら（未入力）と出す", async () => {
+    const { visionPrompt } = await import("@/features/app01/logic");
+    const p = visionPrompt({ desire: "" });
+    expect(p).toContain("■ 叶えたい願望：（未入力）");
+    expect(p).toContain("写真のようにリアル".slice(0, 0) + "自然光の写真");
+  });
+});

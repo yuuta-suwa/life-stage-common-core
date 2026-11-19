@@ -339,3 +339,43 @@ export function hasAnyAnswer(answers: Answers | null | undefined): boolean {
       : v === true || typeof v === "number";
   return Boolean(answers) && Object.values(answers as Record<string, unknown>).some(filled);
 }
+
+/* ---------- LEVEL03：ChatGPT でビジョン画像を作るための投げ込み文（本人が自分の ChatGPT に貼り付ける） ---------- */
+export const VISION_STYLES = [
+  { value: "photo", label: "写真のようにリアル", text: "自然光の写真のようにリアルなタッチ" },
+  { value: "warm", label: "温かいイラスト", text: "やわらかく温かみのあるイラスト" },
+  { value: "movie", label: "映画のワンシーン", text: "映画のワンシーンのような印象的な構図と光" },
+  { value: "watercolor", label: "水彩画", text: "淡い色づかいの水彩画" },
+] as const;
+
+export type VisionPromptInput = { desire: string; scene?: string; when?: string; who?: string; feeling?: string; style?: string };
+
+const oneLine = (v: string | undefined, max = 200) => (v ?? "").replace(/\s+/g, " ").trim().slice(0, max);
+
+export function visionPrompt(input: VisionPromptInput): string {
+  const style = VISION_STYLES.find((s) => s.value === input.style) ?? VISION_STYLES[0];
+  const row = (label: string, v: string | undefined, fallback: string) => `■ ${label}：${oneLine(v) || fallback}`;
+  return [
+    "私の「叶えたい未来」を表すビジョンボード用の画像を1枚作ってください。",
+    "",
+    row("叶えたい願望", input.desire, "（未入力）"),
+    row("場面・場所", input.scene, "願望が叶った瞬間がひと目で伝わる場面"),
+    row("実現したい時期", input.when, "数年後"),
+    row("誰と、何をしているか", input.who, "自分が主役として、その場面を楽しんでいる"),
+    row("その瞬間の気持ち", input.feeling, "満たされて、前向きで、誇らしい"),
+    `■ 雰囲気：${style.text}`,
+    "",
+    "【条件】",
+    "・縦長（4:5）で、スマートフォンで見やすい構図にする",
+    "・画像の中に文字・ロゴ・透かしを入れない",
+    "・人物は後ろ姿・横顔・遠景などにし、実在の特定の人物に見えないようにする",
+    "・有名人、キャラクター、ブランドのロゴや商品は描かない",
+    "・明るく、毎日見返したくなる前向きな印象にする",
+    "",
+    "画像を作ったあと、次の4行を短く書いてください（アプリへの記入に使います）。",
+    "1. この画像が表す願望：",
+    "2. 実現したい時期：",
+    "3. 誰と何をしているか：",
+    "4. その瞬間の気持ち：",
+  ].join("\n");
+}

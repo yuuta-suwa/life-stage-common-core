@@ -46,7 +46,7 @@ export default async function FinalPage({ searchParams }: { searchParams: Promis
         ) : transfer?.status === "failed" ? (
           <>
             <div className="notice warn">
-              {COPY.app02Failed}（引き継ぎが完了していません。APP01 の人生設計はそのまま保存されています）
+              {COPY.app02Failed}
               {transfer.last_error === "TARGET_APP_ACCESS_DENIED" ? "（APP02 の利用権限がまだ付与されていません。管理者にご確認ください）" : ""}
             </div>
             <form action={retryHandoff}>
