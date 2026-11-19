@@ -245,3 +245,55 @@ dl.answers dd { margin: 2px 0 0; white-space: pre-wrap; word-break: break-word; 
 /* LEVEL03 ChatGPT 投げ込みガイド */
 .vision-guide summary { cursor: pointer; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .vision-guide .guide-steps { margin: 12px 0; padding-left: 20px; line-height: 1.8; }
+
+/* ---------- APP02 ---------- */
+.app02-main { max-width: 1100px; }
+.step-nav { justify-content: space-between; margin: -8px 0 16px; }
+.mode-list { display: grid; gap: 8px; margin-top: 8px; }
+.mode-option { align-items: flex-start; }
+.grid.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .grid.two { grid-template-columns: 1fr; } }
+.ai-panel summary, .vision-guide summary { cursor: pointer; }
+.analysis-row .chain { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 1024px) { .analysis-row .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .analysis-row .chain { grid-template-columns: 1fr; } }
+.diag-q { border: 0; padding: 0; margin: 0 0 8px; }
+.diag-q legend { margin-bottom: 4px; }
+.env-table td { min-width: 150px; vertical-align: top; }
+.env-table td select, .env-table td input { width: 100%; margin-bottom: 4px; }
+.ok-text { color: #1f6b3a; } .warn-text { color: #8a5a00; }
+.quiz fieldset { border: 1px solid var(--line); }
+.toolbar { gap: 8px; margin-bottom: 12px; }
+.inline-details > summary { list-style: none; display: inline-flex; }
+.inline-details > summary::-webkit-details-marker { display: none; }
+.scroll-hint { display: none; }
+@media (max-width: 1024px) { .scroll-hint { display: block; } }
+
+/* 10ヵ年ガント（仕様 §12-1）：能力列を固定、年度列のみ横スクロール。色だけで意味を区別しない */
+.gantt-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--white); -webkit-overflow-scrolling: touch; }
+.gantt { border-collapse: separate; border-spacing: 0; min-width: 100%; }
+.gantt th, .gantt td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); padding: 0; text-align: left; }
+.gantt thead th, .gantt thead td { padding: 6px 8px; background: #f7f8fb; font-size: 12.5px; white-space: nowrap; }
+.gantt .g-year th { font-size: 14px; font-weight: 700; color: var(--navy); }
+.gantt .g-flag td { height: 26px; }
+.g-flag-mark { color: #1f6b3a; font-weight: 700; white-space: nowrap; }
+.gantt .g-sticky { position: sticky; left: 0; z-index: 2; background: var(--white); min-width: 128px; max-width: 160px; padding: 8px; box-shadow: 1px 0 0 var(--line); }
+.gantt thead .g-sticky { background: #f7f8fb; z-index: 3; }
+.gantt .g-ability { font-size: 13px; color: var(--navy); white-space: normal; }
+.gantt .g-cell { min-width: 132px; width: 132px; vertical-align: top; }
+.gantt .g-cell button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; width: 100%; min-height: 76px; padding: 8px; cursor: pointer; }
+.gantt .g-cell button:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+.gantt .g-cell.selected { box-shadow: inset 0 0 0 3px var(--navy); }
+.g-text { font-size: 13px; line-height: 1.4; color: var(--ink, #1b2333); }
+.g-meta { font-size: 11px; color: var(--muted); }
+.gantt .g-commit { background-color: #eaf6ee; }
+.cat-prep { background: #f3f4f6; } .cat-learn, .cat-practice { background: #eef4fb; } .cat-sustain, .cat-teach { background: #eef7f1; } .cat-build, .cat-legacy { background: #f6f3ea; }
+.gantt .g-cell.g-commit { background-image: linear-gradient(#eaf6ee66, #eaf6ee66); }
+.g-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; list-style: none; padding: 0; margin: 8px 0 16px; }
+.swatch { display: inline-block; width: 14px; height: 14px; border: 1px solid var(--line); border-radius: 3px; vertical-align: -2px; }
+.findings li { margin-bottom: 10px; }
+.focus-table th { white-space: nowrap; }
+.focus-form { gap: 6px 12px; align-items: center; }
+.checklist { list-style: none; padding: 0; line-height: 2; }
+.pres-section textarea { width: 100%; }
+@media print { .gantt-wrap { overflow: visible; } }

@@ -114,7 +114,7 @@ export function consistencyCheck(opts: {
 }
 
 /* ---------- 修了条件（§04） ---------- */
-export type StepRow = { step_code: string; status: "draft" | "done"; data: Json };
+export type StepRow = { step_code: string; status: "draft" | "done"; data: Json; updated_at?: string };
 export function completionChecklist(opts: { steps: StepRow[]; plan: PlanRow | null; hasVision: boolean }) {
   const done = (c: string) => opts.steps.some((s) => s.step_code === c && s.status === "done");
   const focusYears = opts.plan ? Object.values(opts.plan.focus).filter((f) => f.length > 0).length : 0;

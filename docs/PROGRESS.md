@@ -1,5 +1,11 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20｜APP02 SELF-REALIZATION ENGINE（Phase 1）＋ APP01 ChatGPT ガイド
+- APP01 LEVEL03：ChatGPT 投げ込みガイド（ビジョン画像の作成文・手順・注意）を追加（D-43）。
+- APP02：S00〜S10・S12・S13・S18 を実装（詳細 docs/APP02.md）。migration 0011 を開発 Supabase に適用（RLS 全有効、Advisors ERROR 0）。
+- テスト：単体・DB 145件、E2E APP01 33件・APP02 19件 全件合格。
+- 未実装（Phase 2）：RETURN TO PURPOSE、レビュー、SHARED VISION 共有、経営者志望ラダー、履歴一覧・任意版の復元、競合時の差分確認。AI 本体は導入しない（ChatGPT 相談文で代替）。
+
 ## 2026-11-19（3）｜APP01 試験公開前の最終検証
 - ① 動作確認項目 33件を整理（docs/APP01_TEST_CHECKLIST.md）。
 - ② ローカル Supabase 実スタック＋ブラウザ E2E **32/32 合格**。実 Supabase でロールバック検証 **20/20 合格**（残存データ 0）。実 Google での確認は未実施（発注者）。
