@@ -48,6 +48,13 @@ const MESSAGES: Record<string, { ja: string; en: string }> = {
   SHARE_TARGET_NOT_ALLOWED: { ja: "共有できるのは担当のメンター／トレーナー／リーダーのみです。", en: "Share target not allowed." },
   INVALID_EXPIRY: { ja: "期限は現在より後の日時を指定してください。", en: "Expiry must be in the future." },
   INVALID_SNAPSHOT_TYPE: { ja: "データ種別が正しくありません。", en: "Invalid snapshot type." },
+  STAGE_LOCKED: { ja: "前の LEVEL を確定すると開放されます。", en: "Complete the previous level first." },
+  INVALID_STAGE: { ja: "LEVEL の指定が正しくありません。", en: "Invalid level." },
+  PREREQUISITE_NOT_CONFIRMED: { ja: "LEVEL01〜09 の最新の内容をすべて確定してから進めてください（再確認が必要な LEVEL があります）。", en: "Confirm all levels 1–9 first." },
+  CHECKLIST_INCOMPLETE: { ja: "確認チェックリストの6項目すべてに「はい」と答えると確定できます。", en: "Complete all six checklist items." },
+  PAYLOAD_TOO_LARGE: { ja: "入力内容が長すぎます。内容を短くしてください。", en: "Input is too long." },
+  BLUEPRINT_INCOMPLETE: { ja: "人生設計の完成に必要な項目（人生の目的・目標）が未設定です。該当 LEVEL を確認してください。", en: "Life purpose and goals are required." },
+  INVALID_REQUEST: { ja: "入力内容が正しくありません。", en: "Invalid input." },
   UNKNOWN: { ja: "処理できませんでした。時間をおいて再試行してください。", en: "Something went wrong." },
 };
 
