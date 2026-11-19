@@ -28,7 +28,7 @@ RPC：`app01_save_draft`、`app01_confirm_stage`（LEVEL10 は全9LEVELの最新
 | 仕様 | 状態 |
 |---|---|
 | §1 画面マップ・途中再開・過去 LEVEL 再編集 | ✅ |
-| §2 共通文言 | ✅（`src/features/app01/copy.ts`。欠け字の補完は §5） |
+| §2 共通文言 | ✅（`src/features/app01/copy.ts`。欠け字の補完は §5・承認済） |
 | §3 状態遷移（locked/available/draft/confirmed、編集で draft・後続は要再確認、確定履歴保持、LEVEL10 は全確定で利用可能） | ✅（reviewed は AI 未導入のため未使用） |
 | §3 XP・バッジ（再確定・共有で加算なし、ランキングなし） | ✅ |
 | §4 10 LEVEL の設問・導入・クリア表示 | ✅ |
@@ -52,7 +52,7 @@ RPC：`app01_save_draft`、`app01_confirm_stage`（LEVEL10 は全9LEVELの最新
 ## 4. テスト
 - DB：`tests/db/app01.test.ts`（9件）＋実 Supabase でロールバック方式の検証（ロック・権限なし拒否・他人／メンターは本体を閲覧不可・選択項目のみ共有・フィードバック・停止で遮断）。
 - 単体：`tests/unit/app01-logic.test.ts`（12件：設問数、最終メッセージ原文、状態判定、XP、未来家計簿、ブループリントの契約適合、整合性レポート、共有文面、画像パス）。
-- 画面：未ログイン時のリダイレクトを検証環境で確認。**ログイン後の実操作は未実施**（Super Admin アカウントに APP01 権限が未付与のため。TODO R-10）。
+- 画面：未ログイン時のリダイレクトを検証環境で確認。**ログイン後の実操作は発注者確認待ち**（2026-11-19 Super Admin に APP01 権限を付与済。TODO R-10）。
 
-## 5. 原本PDFの欠け字の補完（要確認 Q-17）
-`src/features/app01/stages.ts` の `TEXT_CORRECTIONS` に原文と実装文言を併記。発注者の確認後に確定する。
+## 5. 原本PDFの欠け字の補完（確定：Q-17／D-33）
+`src/features/app01/stages.ts` の `TEXT_CORRECTIONS` に原文と実装文言を併記。2026-11-19 発注者承認により補完内容で確定。最終メッセージは原文どおり。

@@ -10,7 +10,7 @@
 | R-08 | GitHub に**空の private リポジトリ**を作成（推奨名：`yuuta-suwa/life-stage-common-core`、README 等は作らない）し、このセッションから push できるよう Claude GitHub App の対象に追加 | このセッションは新規リポジトリを作成できないため |
 | R-05 | ~~Google OAuth クライアント~~ | **完了**（発注者が登録。設定は自動確認済み） |
 | R-06 | ~~初期 Super Admin~~ | **完了**（2026-11-19 登録・MFA 登録済み） |
-| R-10 | APP01 の実操作確認：Super Admin（または試験ユーザー）に APP01 権限を付与して LEVEL01〜10・総復習・最終メッセージを操作 | 管理画面 PERMISSIONS では自分自身は一覧に出ないため、別の試験ユーザーを招待するか開発側で付与 |
+| R-10 | APP01 の実操作確認：LEVEL01〜10・総復習・最終メッセージ・APP02 引き継ぎを操作 | 2026-11-19 Super Admin に APP01 権限を付与済（監査ログ entitlement.grant / aal2）。**発注者の実操作確認待ち** |
 | R-09 | 実ログイン検証の残り（STG_VERIFICATION「実施状況」の保留項目） | **保留**（発注者指示）。テスト用 Google アカウントと実機が必要 |
 | R-07 | 試験運用のテスト利用者5名（Admin1・Mentor1・User2 ＋ Super Admin） | Phase 6 |
 
@@ -32,7 +32,7 @@
 | Q-13 | ~~LIFE STAGE 3.0 と APP03 の関係~~ | **解決**：別アプリとして扱う（D-28） |
 | Q-14 | LEI APP HUB（app-access-system の未マージブランチ）を将来、共通基盤を参照するポータルにするか | 対象外 |
 | Q-15 | 既存 LIFE STAGE 2.0 利用者に新 APP02 へのデータ移行を提供するか | 未着手 |
-| Q-17 | APP01 原本PDFの欠け字の補完内容（`src/features/app01/stages.ts` TEXT_CORRECTIONS、最終メッセージ「二度ない人生を」） | 文脈から補完して実装（D-33） |
+| Q-17 | APP01 原本PDFの欠け字の補完内容 | ✅ 解決（2026-11-19 発注者承認：補完はそのままで可。D-33 確定） |
 | Q-18 | APP01 の下書き共有・総復習全体／最終メッセージのアプリ内共有・PNG 画像共有の優先度 | 未実装（D-36） |
 | Q-16 | Supabase 組織のプラン（現在 Free。自動休止・バックアップなし）を試験運用前に Pro へ上げるか | 未定 |
 
