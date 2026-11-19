@@ -4,7 +4,8 @@
 #
 #   backup  : 対象DBの public / private / auth(ユーザー) / storage(メタデータ) を
 #             pg_dump（カスタム形式）で取得し、SHA-256 を記録する
-#   verify  : 取得したバックアップを「検証用DB」へ復元し、主要テーブルの件数を比較する
+#   verify  : 取得したバックアップを「検証用DB」へ復元し、主要テーブル（APP01 含む）の件数を比較する
+#   ※ Storage は「メタデータ（storage.objects）」のみ。画像ファイル本体は含まれない（docs/BACKUP_RUNBOOK.md §5）
 #
 # 接続文字列は環境変数で渡す（Git・コマンド履歴に残さないこと）
 #   SOURCE_DB_URL : 取得元（Supabase: Settings > Database > Connection string / Session pooler）
@@ -34,13 +35,21 @@ case "${1:-}" in
     : "${VERIFY_DB_URL:?VERIFY_DB_URL is required}"
     if [ "$VERIFY_DB_URL" = "$SOURCE_DB_URL" ]; then echo "VERIFY_DB_URL must differ from SOURCE_DB_URL"; exit 1; fi
     sha256sum -c "$FILE.sha256"
-    pg_restore --no-owner --no-privileges --exit-on-error --dbname "$VERIFY_DB_URL" "$FILE"
+    # 新規の空DBにも既定の public スキーマがあるため、--clean --if-exists で置き換えて復元する
+    pg_restore --no-owner --no-privileges --clean --if-exists --exit-on-error --dbname "$VERIFY_DB_URL" "$FILE"
     Q="select string_agg(t || '=' || n, ' ' order by t) from (
          select 'profiles' t, count(*) n from public.profiles union all
          select 'app_entitlements', count(*) from public.app_entitlements union all
          select 'invitations', count(*) from public.invitations union all
          select 'audit_logs', count(*) from public.audit_logs union all
-         select 'data_transfers', count(*) from public.data_transfers) x"
+         select 'data_transfers', count(*) from public.data_transfers union all
+         select 'data_shares', count(*) from public.data_shares union all
+         select 'app_snapshots', count(*) from public.app_snapshots union all
+         select 'app01_stage_answers', count(*) from public.app01_stage_answers union all
+         select 'app01_stage_history', count(*) from public.app01_stage_history union all
+         select 'app01_feedback', count(*) from public.app01_feedback union all
+         select 'auth_users', count(*) from auth.users union all
+         select 'storage_objects', count(*) from storage.objects) x"
     SRC="$(psql -XAtq "$SOURCE_DB_URL" -c "$Q")"
     DST="$(psql -XAtq "$VERIFY_DB_URL" -c "$Q")"
     echo "source : $SRC"; echo "restore: $DST"

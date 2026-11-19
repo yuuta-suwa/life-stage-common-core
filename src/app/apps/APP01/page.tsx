@@ -5,7 +5,7 @@ import { Flash } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { STAGES } from "@/features/app01/stages";
 import { COPY } from "@/features/app01/copy";
-import { resumeStage, stageStates, xp, type StageState } from "@/features/app01/logic";
+import { isBlueprintStale, resumeStage, stageStates, xp, type StageState } from "@/features/app01/logic";
 import { hasApp01Consent, loadBlueprintState, loadStageRows } from "@/features/app01/data";
 import { startQuest } from "./actions";
 
@@ -53,6 +53,7 @@ export default async function App01Home({ searchParams }: { searchParams: Promis
   const score = xp(rows);
   const resume = resumeStage(states);
   const started = rows.length > 0;
+  const stale = isBlueprintStale(states, Boolean(bp.snapshot));
 
   return (
     <>
@@ -68,10 +69,12 @@ export default async function App01Home({ searchParams }: { searchParams: Promis
         </div>
       ) : null}
 
+      {stale ? <div className="notice warn">{COPY.blueprintStale}</div> : null}
+
       <div className="grid kpi">
         <div className="card kpi-card gold"><div className="label"><b>XP</b>経験値</div><div className="value">{score.xp}<span className="small muted"> / {score.max}</span></div></div>
         <div className="card kpi-card"><div className="label"><b>BADGES</b>バッジ</div><div className="value">{score.badges.length}<span className="small muted"> / 10</span></div></div>
-        <div className="card kpi-card"><div className="label"><b>BLUEPRINT</b>人生設計</div><div className="value" style={{ fontSize: 18 }}>{bp.snapshot ? "完成" : "作成中"}</div></div>
+        <div className="card kpi-card"><div className="label"><b>BLUEPRINT</b>人生設計</div><div className="value" style={{ fontSize: 18 }}>{stale ? COPY.recheck : bp.snapshot ? "完成" : "作成中"}</div></div>
       </div>
 
       <div className="row" style={{ margin: "18px 0" }}>

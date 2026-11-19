@@ -120,3 +120,14 @@ describe("共有・画像", () => {
     expect(isOwnVisionKey(`${uid}/APP02/vision/abcdefgh12.png`, uid)).toBe(false);
   });
 });
+
+describe("isBlueprintStale（仕様 §14：更新後は BLUEPRINT も要再確認）", () => {
+  it("完成後に LEVEL10 が確定のままなら最新", async () => {
+    const { isBlueprintStale } = await import("@/features/app01/logic");
+    const all = Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, "confirmed"])) as Record<number, "confirmed">;
+    expect(isBlueprintStale(all, true)).toBe(false);
+    expect(isBlueprintStale({ ...all, 10: "recheck" }, true)).toBe(true);
+    expect(isBlueprintStale({ ...all, 10: "draft" }, true)).toBe(true);
+    expect(isBlueprintStale({ ...all, 10: "recheck" }, false)).toBe(false);
+  });
+});

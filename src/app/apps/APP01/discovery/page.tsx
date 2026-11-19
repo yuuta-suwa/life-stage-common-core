@@ -6,7 +6,7 @@ import { CopyButton, PrintButton } from "@/components/copy-button";
 import { formatDateTime } from "@/components/ui";
 import { getStage } from "@/features/app01/stages";
 import { COPY } from "@/features/app01/copy";
-import { DISCOVERY_CARDS, blueprintShareText, shareText, stageItems, stageStates, visionImages, type DisplayItem } from "@/features/app01/logic";
+import { DISCOVERY_CARDS, blueprintShareText, isBlueprintStale, shareText, stageItems, stageStates, visionImages, type DisplayItem } from "@/features/app01/logic";
 import { hasApp01Consent, loadBlueprintState, loadLatestConfirmed, loadStageRows, signedVisionUrls } from "@/features/app01/data";
 import type { buildBlueprint } from "@/features/app01/logic";
 
@@ -17,6 +17,7 @@ export default async function DiscoveryPage() {
   if (!(await hasApp01Consent(supabase))) redirect("/apps/APP01");
   const [rows, latest, bp] = await Promise.all([loadStageRows(supabase), loadLatestConfirmed(supabase), loadBlueprintState(supabase)]);
   const states = stageStates(rows);
+  const stale = isBlueprintStale(states, Boolean(bp.snapshot));
   const vision = latest[3] ? visionImages(latest[3].answers) : [];
   const urls = await signedVisionUrls(supabase, vision.map((v) => v.key));
   const name = access.display_name ?? "";
@@ -81,7 +82,9 @@ export default async function DiscoveryPage() {
         <h2 className="section-title">MY LIFE BLUEPRINT<span>｜人生設計の完成・出力</span></h2>
         {bp.snapshot ? (
           <>
-            <p>人生設計は完成しています（第{bp.snapshot.version}版・{formatDateTime(bp.snapshot.confirmed_at)}）。</p>
+            {stale ? <div className="notice warn">{COPY.blueprintStale}<div style={{ marginTop: 8 }}><Link className="btn small gold" href="/apps/APP01/level/10">LEVEL10 で再確認する</Link></div></div>
+              : <p>人生設計は完成しています（第{bp.snapshot.version}版・{formatDateTime(bp.snapshot.confirmed_at)}）。</p>}
+            {stale ? <p className="small muted">以下は前回完成時（第{bp.snapshot.version}版）の内容です。</p> : null}
             <div className="row">
               <PrintButton className="btn gold" label={COPY.saveBlueprint} />
               <CopyButton className="btn ghost" label="文章で共有する" text={blueprintShareText(name, bp.snapshot.payload as ReturnType<typeof buildBlueprint>)} />

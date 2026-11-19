@@ -36,6 +36,11 @@ export const COPY = {
   discoveryTitle: "あなたが明確にした 10 のこと",
   unset: "未設定",
   recheck: "再確認が必要",
+  /** 仕様 §13 エラー・例外時の表示文言（原文） */
+  recheckNotice: "以前の回答が更新されました。関連するステージの内容を確認してください。",
+  budgetProvisional: "未入力の項目があるため、合計は暫定値です。",
+  app02Failed: "人生設計は保存されています。APP02 への引き継ぎを再試行してください。",
+  blueprintStale: "人生設計の内容が更新されたため、MY LIFE BLUEPRINT は再確認が必要です。LEVEL10 で内容を確認し、もう一度「人生設計を完成させる」を行ってください。",
   draftLabel: "下書き",
   irrevocable: "アプリ内の閲覧権限は撤回できます。ダウンロード済みの画像・PDF や外部へのコピーは回収できません。",
   receivedList: (name: string) => `${name}さんから APP01 の共有が届きました。`,

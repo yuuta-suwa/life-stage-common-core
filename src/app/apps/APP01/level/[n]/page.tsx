@@ -80,7 +80,7 @@ export default async function LevelPage({ params, searchParams }: {
   return (
     <>
       {header}
-      {state === "recheck" ? <div className="notice warn">前の LEVEL が編集されたため、{COPY.recheck}です。内容を確認して、もう一度確定してください。</div> : null}
+      {state === "recheck" ? <div className="notice warn">{COPY.recheckNotice}（前の LEVEL が編集されたため、{COPY.recheck}です。内容を確認して、もう一度確定してください）</div> : null}
       {state === "confirmed" ? <div className="notice ok">確定済みです（第{row?.version}版）。編集すると下書きに戻り、確定済みの後続 LEVEL は再確認が必要になります。</div> : null}
       <details className="card"><summary>AI 精査・確定対象</summary><p className="small">{stage.aiTarget}</p></details>
 

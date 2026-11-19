@@ -222,6 +222,7 @@ function BudgetPanel({ answers }: { answers: Answers }) {
         <dt>現在の収入との差（月額）</dt><dd>{b.monthly_gap === null ? "未入力" : `${b.monthly_gap >= 0 ? "＋" : "−"}${Math.abs(b.monthly_gap).toLocaleString("ja-JP")}円`}</dd>
         <dt>資産目標までの差</dt><dd>{yenText(b.assets_gap)}</dd>
       </dl>
+      {b.unentered.length ? <p className="notice warn small" style={{ margin: "0 0 8px" }}>{COPY.budgetProvisional}</p> : null}
       <p className="small muted">{BUDGET_ASSUMPTION} 未入力の項目は 0 円として扱わず「未入力」と表示します（未入力 {b.unentered.length} 件）。</p>
     </div>
   );

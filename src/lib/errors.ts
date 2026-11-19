@@ -53,6 +53,7 @@ const MESSAGES: Record<string, { ja: string; en: string }> = {
   PREREQUISITE_NOT_CONFIRMED: { ja: "LEVEL01〜09 の最新の内容をすべて確定してから進めてください（再確認が必要な LEVEL があります）。", en: "Confirm all levels 1–9 first." },
   CHECKLIST_INCOMPLETE: { ja: "確認チェックリストの6項目すべてに「はい」と答えると確定できます。", en: "Complete all six checklist items." },
   PAYLOAD_TOO_LARGE: { ja: "入力内容が長すぎます。内容を短くしてください。", en: "Input is too long." },
+  BLUEPRINT_STALE: { ja: "人生設計の内容が更新されたため、LEVEL10 で再確認してから引き継いでください。", en: "Your blueprint changed. Re-confirm LEVEL10 before handing over." },
   BLUEPRINT_INCOMPLETE: { ja: "人生設計の完成に必要な項目（人生の目的・目標）が未設定です。該当 LEVEL を確認してください。", en: "Life purpose and goals are required." },
   INVALID_REQUEST: { ja: "入力内容が正しくありません。", en: "Invalid input." },
   UNKNOWN: { ja: "処理できませんでした。時間をおいて再試行してください。", en: "Something went wrong." },

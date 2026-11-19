@@ -412,6 +412,26 @@ async function main() {
     expect(tr.length === 1, `引継ぎ要求が重複しています：${JSON.stringify(tr)}`);
   });
 
+  await step("【回帰】完成後に LEVEL04 を更新すると BLUEPRINT が「再確認が必要」になり、再完成まで APP02 へ引き継げない", async () => {
+    const p = await user.newPage();
+    await p.goto("/apps/APP01/level/4");
+    await p.locator("main textarea").first().fill("完成後に更新した理由");
+    await waitSaved(p);
+    await p.goto("/apps/APP01");
+    expect((await p.locator("main").innerText()).includes("MY LIFE BLUEPRINT は再確認が必要"), "ホームに BLUEPRINT 要再確認が出ていません");
+    await p.goto("/apps/APP01/final");
+    const text = await p.locator("main").innerText();
+    expect(text.includes("再完成するまで、APP02 への引き継ぎは行えません"), "最終画面で引き継ぎが止まっていません");
+    expect(!(await p.getByRole("button", { name: /APP02|再試行/ }).count()), "引き継ぎボタンが表示されています");
+    await shot(p, "15b-final-stale");
+    // 再確定 → LEVEL10 再完成 → 新しい版が作られ、表示が戻る
+    for (let no = 4; no <= 10; no++) { await p.goto(`/apps/APP01/level/${no}`); await confirmLevel(p); }
+    const [{ n }] = await sql("select count(*)::int n from public.app_snapshots where user_id=$1", [ids[USER]]);
+    expect(n === 2, `再完成で新しい版が作られていません：${n}`);
+    await p.goto("/apps/APP01/final");
+    expect(!(await p.locator("main").innerText()).includes("再確認が必要"), "再完成後も要再確認のままです");
+  });
+
   await step("担当者（メンター）設定 → 本人が選んだ項目だけを共有 → メンターは共有分のみ閲覧・返信", async () => {
     mentor = await inviteAndAccept(MENTOR, [], "mentor");
     const page = await admin.newPage();

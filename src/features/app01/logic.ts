@@ -321,3 +321,11 @@ export const DISCOVERY_CARDS = [
   { no: 9, name: "目標と期限", data: "長中短期・期限" },
   { no: 10, name: "自己実現への決意", data: "最初の行動・開始日" },
 ] as const;
+
+/**
+ * 完成済みの MY LIFE BLUEPRINT が古くなっているか（仕様 §14：LEVEL04・09 等の更新で BLUEPRINT も要再確認）。
+ * LEVEL10 が最新の確定状態でなければ、保存済みのブループリントは最新の回答を反映していない。
+ */
+export function isBlueprintStale(states: Record<number, StageState>, hasSnapshot: boolean) {
+  return hasSnapshot && states[10] !== "confirmed";
+}

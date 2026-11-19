@@ -8,8 +8,8 @@ import { requirePage } from "@/lib/access";
 import { errorCode } from "@/lib/errors";
 import { getStage } from "@/features/app01/stages";
 import { APP01_CONSENT_VERSION } from "@/features/app01/copy";
-import { BlueprintIncompleteError, buildBlueprint, isOwnVisionKey, stageItems, visionImages, type Answers } from "@/features/app01/logic";
-import { answersByStage, loadLatestConfirmed, loadBlueprintState } from "@/features/app01/data";
+import { BlueprintIncompleteError, buildBlueprint, isBlueprintStale, isOwnVisionKey, stageItems, stageStates, visionImages, type Answers } from "@/features/app01/logic";
+import { answersByStage, loadLatestConfirmed, loadBlueprintState, loadStageRows } from "@/features/app01/data";
 
 const BASE = "/apps/APP01";
 const stageNo = z.coerce.number().int().min(1).max(10);
@@ -89,6 +89,8 @@ export async function handoffToApp02(formData: FormData) {
   if (formData.get("consent") !== "on") redirect(`${BASE}/final?error=CONSENT_REQUIRED`);
   const { snapshot } = await loadBlueprintState(supabase);
   if (!snapshot) redirect(`${BASE}/final?error=NOT_FOUND`);
+  // 完成後に回答が更新され、ブループリントが最新でない間は引き継がない（古い人生設計を APP02 に渡さない）
+  if (isBlueprintStale(stageStates(await loadStageRows(supabase)), true)) redirect(`${BASE}/final?error=BLUEPRINT_STALE`);
   const { data, error } = await supabase.rpc("request_transfer", {
     p_source_snapshot_id: snapshot.id, p_target_app: "APP02", p_schema_version: "1.0", p_consent_version: APP01_CONSENT_VERSION,
   });
@@ -101,6 +103,7 @@ export async function retryHandoff(formData: FormData) {
   const { supabase } = await guard();
   const id = z.uuid().safeParse(formData.get("transfer_id"));
   if (!id.success) redirect(`${BASE}/final?error=NOT_FOUND`);
+  if (isBlueprintStale(stageStates(await loadStageRows(supabase)), true)) redirect(`${BASE}/final?error=BLUEPRINT_STALE`);
   const { data, error } = await supabase.rpc("retry_transfer", { p_transfer_id: id.data });
   if (error) redirect(`${BASE}/final?error=${errorCode(error)}`);
   redirect(`${BASE}/final?transfer=${(data as { status: string }).status}`);
