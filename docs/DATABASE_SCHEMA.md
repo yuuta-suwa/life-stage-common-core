@@ -89,3 +89,11 @@ create policy own_rows on public.app01_stage_responses for all to authenticated
 2. 発注者承認後、SETTINGS 画面（Super Admin）で `trial` → 試験運用者に権限付与 → `active`。
 3. アプリ固有テーブルは本書「各APP固有テーブルの追加テンプレート」に従い、RLS で `private.has_app_access('<APP>')`（必要に応じ `private.has_app_role`）を使う。
 **共通基盤のコード変更は不要。**
+
+## APP01（migration 0010）
+| テーブル | 用途 | 主な制約 |
+|---|---|---|
+| `app01_stage_answers` | 本人×LEVEL の現在の回答 | (user_id, stage_no) 一意、answers は 64KB まで、確定時は confirmed_at 必須 |
+| `app01_stage_history` | 確定スナップショット | (user_id, stage_no, version) 一意、更新はトリガーで拒否 |
+| `app01_feedback` | 共有先のコメント | share_id → data_shares、1〜2000文字 |
+RLS：answers/history は本人＋APP01 権限のみ（管理者・メンターの閲覧ポリシーなし）。feedback は共有元の本人と書いた共有先のみ。詳細 docs/APP01.md。

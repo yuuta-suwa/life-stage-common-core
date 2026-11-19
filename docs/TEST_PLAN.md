@@ -30,7 +30,9 @@ pnpm lint && pnpm typecheck && pnpm build && pnpm check:bundle
 | Unit API 認可・CSRF | tests/unit/api-routes.test.ts | 9 | 合格 |
 | Unit 共通ライブラリ | tests/unit/lib.test.ts | 14 | 合格 |
 | Unit 連携契約 | tests/unit/transfer-contract.test.ts | 4 | 合格 |
-| **合計** | | **97** | **全件合格** |
+| DB APP01 | tests/db/app01.test.ts | 9 | 合格 |
+| Unit APP01 ロジック | tests/unit/app01-logic.test.ts | 12 | 合格 |
+| **合計** | | **118** | **全件合格** |
 
 そのほか：ESLint 0件、TypeScript 0エラー、`next build` 成功、`check:bundle`（配布物に秘密鍵・service_role・ソースマップなし）合格、未認証スモークテスト合格（保護ページ→/login、保護API→401、セキュリティヘッダー）、既存イベント管理アプリへの影響なし（lint/tsc/テスト45件）。
 
