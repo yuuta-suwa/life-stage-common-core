@@ -18,7 +18,7 @@ const STATE_LABEL: Record<StageState, { label: string; tone: string }> = {
 };
 
 export default async function App01Home({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  await requirePage({ kind: "app", code: "APP01" }, "/apps/APP01");
+  const access = await requirePage({ kind: "app", code: "APP01" }, "/apps/APP01");
   const sp = await searchParams;
   const supabase = await createClient();
   const consented = await hasApp01Consent(supabase);
@@ -62,6 +62,11 @@ export default async function App01Home({ searchParams }: { searchParams: Promis
         <p>{COPY.start}</p>
       </section>
       <Flash error={sp.error} />
+      {!access.display_name?.trim() ? (
+        <div className="notice info">
+          表示名が未設定です。メンター等に共有したとき相手に表示される名前を、<Link href="/account">アカウント</Link>で設定してください（任意）。
+        </div>
+      ) : null}
 
       <div className="grid kpi">
         <div className="card kpi-card gold"><div className="label"><b>XP</b>経験値</div><div className="value">{score.xp}<span className="small muted"> / {score.max}</span></div></div>

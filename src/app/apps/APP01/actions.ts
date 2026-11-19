@@ -49,6 +49,16 @@ export async function confirmStage(stage: number): Promise<{ ok: true; redirectT
   const { supabase } = await guard();
   const n = stageNo.safeParse(stage);
   if (!n.success) return { ok: false, code: "INVALID_STAGE" };
+  if (n.data === 10) {
+    // 人生設計に必須の項目（LEVEL04 人生の目的・LEVEL09 目標）が欠けていれば、LEVEL10 を確定する前に止める
+    // （確定だけ済んで MY LIFE BLUEPRINT が作られない中途半端な状態を防ぐ）
+    try {
+      buildBlueprint(answersByStage(await loadLatestConfirmed(supabase)), randomUUID());
+    } catch (e) {
+      if (e instanceof BlueprintIncompleteError) return { ok: false, code: "BLUEPRINT_INCOMPLETE", missing: e.missing };
+      throw e;
+    }
+  }
   const { error } = await supabase.rpc("app01_confirm_stage", { p_stage: n.data });
   if (error) return { ok: false, code: errorCode(error) };
   revalidatePath(BASE, "layout");

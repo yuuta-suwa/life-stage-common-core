@@ -48,6 +48,9 @@ code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-
 .brand span { color: var(--gold); font-size: 12px; letter-spacing: 0.08em; }
 .topbar .who { display: flex; gap: 12px; align-items: center; font-size: 13px; }
 .topbar .who a, .topbar .who button { color: var(--white); }
+.topbar .who .btn.ghost { background: transparent; color: var(--white); border: 1px solid rgba(255, 255, 255, 0.55); }
+.topbar .who .btn.ghost:hover { background: rgba(255, 255, 255, 0.12); color: var(--white); }
+.brand, .topbar .who a { white-space: nowrap; }
 
 /* ---------- shell ---------- */
 .shell { display: grid; grid-template-columns: 236px 1fr; min-height: calc(100vh - 56px); }
@@ -74,6 +77,9 @@ code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-
   .sidenav a small { display: none; }
   .main { padding: 18px 14px 48px; }
   .topbar .who .email { display: none; }
+  .topbar { padding: 0 12px; }
+  .brand span { display: none; }
+  .topbar .who { gap: 10px; }
 }
 
 /* ---------- headings ---------- */
@@ -199,6 +205,7 @@ details summary { cursor: pointer; font-weight: 600; }
 .app01-question .q-label { font-size: 15px; display: flex; gap: 10px; align-items: baseline; margin-bottom: 8px; }
 .q-no { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border-radius: 999px; background: var(--navy); color: var(--white); font-size: 12px; }
 .app01-question textarea { min-height: 84px; }
+.save-bar .save-error { flex: 1 0 100%; margin: 0; }
 .save-bar { position: sticky; bottom: 0; display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-wrap: wrap; background: rgba(255,255,255,0.96); border-top: 1px solid var(--line); padding: 12px 4px; margin-top: 16px; z-index: 5; }
 .save-state { margin-right: auto; font-size: 13px; color: var(--muted); }
 .save-state.saved { color: var(--ok); }
