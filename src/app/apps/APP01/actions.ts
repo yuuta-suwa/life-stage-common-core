@@ -8,7 +8,7 @@ import { requirePage } from "@/lib/access";
 import { errorCode } from "@/lib/errors";
 import { getStage } from "@/features/app01/stages";
 import { APP01_CONSENT_VERSION } from "@/features/app01/copy";
-import { BlueprintIncompleteError, buildBlueprint, isBlueprintStale, isOwnVisionKey, stageItems, stageStates, visionImages, type Answers } from "@/features/app01/logic";
+import { BlueprintIncompleteError, buildBlueprint, hasAnyAnswer, isBlueprintStale, isOwnVisionKey, stageItems, stageStates, visionImages, type Answers } from "@/features/app01/logic";
 import { answersByStage, loadLatestConfirmed, loadBlueprintState, loadStageRows } from "@/features/app01/data";
 
 const BASE = "/apps/APP01";
@@ -46,9 +46,12 @@ export async function saveDraft(stage: number, answers: Answers): Promise<SaveRe
 
 /** LEVEL の確定。LEVEL10 の確定時は完成版スナップショット（MY LIFE BLUEPRINT）を作成する */
 export async function confirmStage(stage: number): Promise<{ ok: true; redirectTo: string } | { ok: false; code: string; missing?: string[] }> {
-  const { supabase } = await guard();
+  const { access, supabase } = await guard();
   const n = stageNo.safeParse(stage);
   if (!n.success) return { ok: false, code: "INVALID_STAGE" };
+  // 未入力（保存された回答が無い・空）のまま確定させない
+  const { data: row } = await supabase.from("app01_stage_answers").select("answers").eq("user_id", access.user_id!).eq("stage_no", n.data).maybeSingle();
+  if (!hasAnyAnswer(row?.answers as Answers | undefined)) return { ok: false, code: "ANSWER_REQUIRED" };
   if (n.data === 10) {
     // 人生設計に必須の項目（LEVEL04 人生の目的・LEVEL09 目標）が欠けていれば、LEVEL10 を確定する前に止める
     // （確定だけ済んで MY LIFE BLUEPRINT が作られない中途半端な状態を防ぐ）

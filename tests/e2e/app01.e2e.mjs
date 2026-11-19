@@ -191,6 +191,11 @@ async function main() {
     await shot(p, "05-onboarding");
     await p.getByRole("button", { name: /同意して開始/ }).click();
     await p.waitForURL(/level\/1/);
+    // 【回帰】何も入力せずに確定を押すと、分かりやすい案内が出て確定されない（実機で「対象が見つかりません」が出た件）
+    await p.locator(".save-bar button.btn.gold").click();
+    const msg = await p.locator(".save-bar .notice.error").innerText();
+    expect(msg.includes("まだ回答が入力されていません"), `未入力確定の案内が出ません：${msg}`);
+    await shot(p, "05b-empty-confirm");
     const r = await p.goto("/apps/APP01/level/2");
     expect((await p.content()).includes("確定すると開放されます"), "LEVEL02 が未開放になっていません");
     expect(r.status() === 200, "未開放画面の応答が不正");

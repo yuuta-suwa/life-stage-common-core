@@ -329,3 +329,13 @@ export const DISCOVERY_CARDS = [
 export function isBlueprintStale(states: Record<number, StageState>, hasSnapshot: boolean) {
   return hasSnapshot && states[10] !== "confirmed";
 }
+
+/** 1つでも入力（空白以外の文字・選択・画像・チェック）があるか。未入力のまま確定させないために使う */
+export function hasAnyAnswer(answers: Answers | null | undefined): boolean {
+  const filled = (v: unknown): boolean =>
+    typeof v === "string" ? v.trim() !== ""
+      : Array.isArray(v) ? v.some(filled)
+      : v !== null && typeof v === "object" ? Object.values(v as Record<string, unknown>).some(filled)
+      : v === true || typeof v === "number";
+  return Boolean(answers) && Object.values(answers as Record<string, unknown>).some(filled);
+}

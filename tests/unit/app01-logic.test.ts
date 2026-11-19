@@ -131,3 +131,16 @@ describe("isBlueprintStale（仕様 §14：更新後は BLUEPRINT も要再確�
     expect(isBlueprintStale({ ...all, 10: "recheck" }, false)).toBe(false);
   });
 });
+
+describe("hasAnyAnswer（未入力のまま確定させない）", () => {
+  it("空・空白・未選択は未入力、文字・選択・画像・チェックは入力あり", async () => {
+    const { hasAnyAnswer } = await import("@/features/app01/logic");
+    expect(hasAnyAnswer(undefined)).toBe(false);
+    expect(hasAnyAnswer({})).toBe(false);
+    expect(hasAnyAnswer({ q1: "", q2: "  \n", q3: [], images: [] })).toBe(false);
+    expect(hasAnyAnswer({ q1: "願望" })).toBe(true);
+    expect(hasAnyAnswer({ q7: ["education"] })).toBe(true);
+    expect(hasAnyAnswer({ images: [{ key: "u/APP01/vision/a.png" }] })).toBe(true);
+    expect(hasAnyAnswer({ q1: "yes" })).toBe(true);
+  });
+});

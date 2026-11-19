@@ -5,6 +5,7 @@ const MESSAGES: Record<string, { ja: string; en: string }> = {
   FORBIDDEN: { ja: "この操作を行う権限がありません。", en: "You do not have permission." },
   MFA_REQUIRED: { ja: "管理操作には二段階認証（MFA）の確認が必要です。", en: "MFA verification is required." },
   NOT_FOUND: { ja: "対象が見つかりません。", en: "Not found." },
+  ANSWER_REQUIRED: { ja: "まだ回答が入力されていません。設問に入力してから確定してください（入力は自動で保存されます）。", en: "Please answer at least one question before confirming." },
   INVALID_EMAIL: { ja: "メールアドレスの形式が正しくありません。", en: "Invalid email address." },
   INVALID_TTL: { ja: "有効期限は1〜168時間で指定してください。", en: "Expiry must be 1–168 hours." },
   INVALID_ROLE: { ja: "役割の指定が正しくありません。", en: "Invalid role." },

@@ -6,7 +6,7 @@ import { messageFor } from "@/lib/errors";
 import { confirmStage, saveDraft } from "@/app/apps/APP01/actions";
 import { COPY } from "./copy";
 import type { StageDef, StageInput } from "./stages";
-import { BUDGET_ASSUMPTION, budgetSummary, visionImages, yenText, type Answers, type StageState, type VisionImage } from "./logic";
+import { BUDGET_ASSUMPTION, budgetSummary, hasAnyAnswer, visionImages, yenText, type Answers, type StageState, type VisionImage } from "./logic";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -76,6 +76,10 @@ export function StageForm(props: {
   };
 
   async function onConfirm() {
+    if (!hasAnyAnswer(latest.current)) {
+      setError({ code: "ANSWER_REQUIRED" });
+      return;
+    }
     if (!window.confirm(COPY.confirmDialog)) return;
     setBusy(true);
     setError(null);
