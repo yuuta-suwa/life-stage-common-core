@@ -1,5 +1,9 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20（3）｜APP03 MAKE IT REAL との連携
+- APP03（別サイト、ソース v1.0.8）の既存の接続契約に合わせ、`/api/integrations/app03/app02` と連携トークン（管理画面で発行・失効）を実装（docs/INTEGRATION_APP03.md）。migration 0014 を開発 Supabase に適用。
+- テスト：単体・DB 159件、E2E APP01 33・APP02 19・APP02 Phase2 13・APP03 連携 6 件 全件合格。実 APP03 からの呼び出しは未実施（トークン登録・本人照合が必要）。
+
 ## 2026-11-20（2）｜APP02 Phase 2・不具合修正
 - APP01 LEVEL03 の ChatGPT ガイドを iPad 横向き（4:3）に変更。発注者に APP02 権限を付与（監査記録あり）。
 - APP02 Phase 2：共有（SHARED VISION）、伴走者レビュー、RETURN TO PURPOSE（報告・割当・修正・再分析・本人の決定・エスカレーション）、経営者志望ラダー、履歴と版の復元・全体初期化、競合検出とオフライン時の端末保持（docs/APP02.md）。

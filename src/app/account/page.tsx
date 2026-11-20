@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CopyButton } from "@/components/copy-button";
 import { requirePage } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { Flash, PageHeader, RoleBadges, SectionTitle, StatusBadge, formatDateTime } from "@/components/ui";
@@ -39,6 +40,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       <SectionTitle en="PROFILE" ja="プロフィール" />
       <div className="card">
         <dl className="kv">
+          <dt>連携用ID<small>外部アプリ（APP03）の本人照合に使います</small></dt><dd><code>{access.user_id}</code> <CopyButton label="コピー" text={access.user_id ?? ""} /></dd>
           <dt>メールアドレス</dt><dd>{access.email}</dd>
           <dt>状態</dt><dd><StatusBadge status={access.status} /></dd>
           <dt>役割</dt><dd><RoleBadges roles={access.roles} /></dd>

@@ -18,6 +18,8 @@ const MESSAGES: Record<string, { ja: string; en: string }> = {
   CONFIRM_MISMATCH: { ja: "確認の入力が一致しません。", en: "Confirmation did not match." },
   CORRECTION_REQUIRED: { ja: "修正案を提示する場合は、修正方針を入力してください。", en: "Please enter the correction." },
   ALREADY_DONE: { ja: "この報告はすでに完了しています。", en: "This report is already closed." },
+  INVALID_TOKEN: { ja: "連携トークンが正しくありません。", en: "Invalid integration token." },
+  RATE_LIMITED: { ja: "短時間に多くの要求がありました。しばらくしてから再試行してください。", en: "Too many requests." },
   NOT_FOUND: { ja: "対象が見つかりません。", en: "Not found." },
   ANSWER_REQUIRED: { ja: "まだ回答が入力されていません。設問に入力してから確定してください（入力は自動で保存されます）。", en: "Please answer at least one question before confirming." },
   INVALID_EMAIL: { ja: "メールアドレスの形式が正しくありません。", en: "Invalid email address." },

@@ -1,6 +1,7 @@
 /** 認証が必要なパス（楽観的チェック用。最終判定はサーバー／DB） */
 const PROTECTED_PREFIXES = ["/admin", "/account", "/apps", "/api"];
-const PUBLIC_API = new Set(["/api/health"]);
+// 機械間連携（APP03 のサーバーから呼ばれる）。本人セッションではなく連携トークンで認証する（D-52）
+const PUBLIC_API = new Set(["/api/health", "/api/integrations/app03/app02"]);
 
 export function isProtectedPath(path: string): boolean {
   if (PUBLIC_API.has(path)) return false;

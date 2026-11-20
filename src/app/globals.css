@@ -308,3 +308,5 @@ dl.answers dd { margin: 2px 0 0; white-space: pre-wrap; word-break: break-word; 
 .ladder-rung.done { border-left: 4px solid #2f8f55; } .ladder-rung.doing { border-left: 4px solid var(--gold); }
 .history-table td { vertical-align: top; }
 .save-state.offline, .save-state.conflict { color: #8a5a00; }
+
+.token-value { word-break: break-all; }

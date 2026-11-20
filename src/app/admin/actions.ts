@@ -164,3 +164,23 @@ export async function updateTtl(formData: FormData) {
   const { code } = await call("admin_update_setting", { p_key: "invitation_ttl_hours", p_value: n.data });
   back(formData, "/admin/settings", code ? `error=${code}` : "ok=settings");
 }
+
+// ---------------- 外部アプリ連携（APP03）：連携トークン ----------------
+export type TokenState = { ok: boolean; code?: string; token?: string; hint?: string; endpoint?: string } | null;
+
+/** 連携トークンの発行（Super Admin・MFA。平文はこの画面で1回だけ表示し、どこにも保存しない） */
+export async function issueIntegrationToken(_prev: TokenState, formData: FormData): Promise<TokenState> {
+  await requirePage({ kind: "admin", superOnly: true }, "/admin/settings");
+  const { data, code } = await call("admin_issue_integration_token", { p_client: "APP03", p_label: String(formData.get("label") ?? "").slice(0, 80) });
+  if (code) return { ok: false, code };
+  const r = data as { token: string; hint: string };
+  revalidatePath("/admin/settings");
+  return { ok: true, token: r.token, hint: r.hint, endpoint: `${await siteUrl()}/api/integrations/app03/app02` };
+}
+
+export async function revokeIntegrationToken(formData: FormData) {
+  const id = uuid.safeParse(formData.get("id"));
+  if (!id.success) back(formData, "/admin/settings", "error=INVALID_REQUEST");
+  const { code } = await call("admin_revoke_integration_token", { p_id: id.data });
+  back(formData, "/admin/settings", code ? `error=${code}` : "ok=token_revoked");
+}

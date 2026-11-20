@@ -2,9 +2,10 @@ import Link from "next/link";
 import { requirePage } from "@/lib/access";
 import { isSuperAdmin } from "@/lib/access-policy";
 import { createClient } from "@/lib/supabase/server";
-import { Flash, PageHeader, SectionTitle } from "@/components/ui";
+import { Flash, PageHeader, SectionTitle, formatDateTime } from "@/components/ui";
+import { IntegrationTokenForm } from "@/components/integration-token-form";
 import { SubmitButton } from "@/components/submit-button";
-import { setAppLifecycle, updateTtl } from "../actions";
+import { revokeIntegrationToken, setAppLifecycle, updateTtl } from "../actions";
 
 const LIFECYCLE: Record<string, { label: string; tone: string }> = {
   planned: { label: "計画中 Planned", tone: "plain" },
@@ -24,6 +25,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   ]);
   const get = (k: string) => (settings ?? []).find((s) => s.key === k)?.value;
   const superAdmin = isSuperAdmin(access);
+  const { data: tokens } = superAdmin ? await supabase.rpc("admin_list_integration_tokens") : { data: [] };
+  const tokenRows = (tokens ?? []) as { id: string; label: string; hint: string; created_at: string; revoked_at: string | null; last_used_at: string | null }[];
 
   return (
     <>
@@ -53,6 +56,32 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <p style={{ marginTop: 12 }}><Link href="/admin/mfa" className="btn small ghost">二段階認証の管理</Link></p>
         </div>
       </div>
+
+      {superAdmin ? (
+        <>
+          <SectionTitle en="INTEGRATION" ja="外部アプリ連携（APP03 MAKE IT REAL）" />
+          <IntegrationTokenForm />
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>トークン（末尾）</th><th>メモ</th><th>発行</th><th>最終利用</th><th>状態</th><th></th></tr></thead>
+              <tbody>
+                {tokenRows.map((t) => (
+                  <tr key={t.id}>
+                    <td><code>…{t.hint}</code></td><td>{t.label || "—"}</td><td className="small">{formatDateTime(t.created_at)}</td>
+                    <td className="small">{t.last_used_at ? formatDateTime(t.last_used_at) : "未使用"}</td>
+                    <td>{t.revoked_at ? <span className="badge plain">失効（{formatDateTime(t.revoked_at)}）</span> : <span className="badge ok">有効</span>}</td>
+                    <td>{!t.revoked_at ? (
+                      <form action={revokeIntegrationToken}><input type="hidden" name="id" value={t.id} /><input type="hidden" name="back" value="/admin/settings" />
+                        <SubmitButton className="btn small danger" confirm="この連携トークンを失効させます。APP03 からの同期は止まります。よろしいですか？">失効</SubmitButton></form>
+                    ) : null}</td>
+                  </tr>
+                ))}
+                {!tokenRows.length ? <tr><td colSpan={6} className="muted">発行済みのトークンはありません。</td></tr> : null}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : null}
 
       <SectionTitle en="APP REGISTRY" ja="アプリ登録マスター" />
       <div className="table-wrap">

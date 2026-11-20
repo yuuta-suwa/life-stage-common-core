@@ -37,11 +37,11 @@ describe("Data API 公開範囲（旧既定の自動 GRANT を再現した DB �
     expect(rows).toEqual([]);
   });
 
-  it("anon はどの RPC も実行できない。private の関数は API から呼べない", async () => {
+  it("anon が実行できる RPC は、連携トークンで認証する APP03 連携の取得だけ（D-52）。private の関数は API から呼べない", async () => {
     const rows = await sql<{ f: string }>(`
-      select p.proname f from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+      select n.nspname || '.' || p.proname f from pg_proc p join pg_namespace n on n.oid = p.pronamespace
       where n.nspname in ('public','private') and has_function_privilege('anon', p.oid, 'EXECUTE')`);
-    expect(rows).toEqual([]);
+    expect(rows.map((r) => r.f)).toEqual(["public.integration_app03_growth_plan"]);
     const boot = await sql<{ ok: boolean }>(`select has_function_privilege('authenticated', 'private.bootstrap_super_admin(text,integer)', 'EXECUTE') ok`);
     expect(boot[0].ok).toBe(false);
   });
