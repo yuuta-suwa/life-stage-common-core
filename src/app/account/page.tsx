@@ -31,7 +31,8 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <h3>{a.name_en}</h3>
             <div className="muted small">{a.name_ja}</div>
             <div style={{ marginTop: 10 }}>
-              {a.granted ? <Link className="btn small" href={`/apps/${a.code}`}>開く｜Open</Link> : <span className="badge plain">権限なし No access</span>}
+              {a.granted ? <Link className="btn small" href={`/apps/${a.code}`} prefetch={false}>開く｜Open</Link> : <span className="badge plain">権限なし No access</span>}
+              {a.granted && a.base_url ? <div className="small muted" style={{ marginTop: 6 }}>外部サイトに移動します</div> : null}
             </div>
           </div>
         ))}

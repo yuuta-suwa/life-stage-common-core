@@ -121,7 +121,8 @@ describe("AT02 招待された本人の登録", () => {
   it("入力検証：不正メール・未選択・無効アプリ・期限範囲", async () => {
     await expectFail(rpc(root.id, "admin_create_invitation", ["not-an-email", ["APP01"], null, null, null]), "INVALID_EMAIL");
     await expectFail(rpc(root.id, "admin_create_invitation", [uniqueEmail(), [], null, null, null]), "NO_APPS_SELECTED");
-    await expectFail(rpc(root.id, "admin_create_invitation", [uniqueEmail(), ["LIFE_ACCOUNTING"], null, null, null]), "INVALID_APP");
+    await sql("insert into public.apps(code, name_en, name_ja, lifecycle, sort_order) values ('ZZ_PLANNED','PLANNED TEST','計画中（試験用）','planned',999) on conflict (code) do nothing");
+    await expectFail(rpc(root.id, "admin_create_invitation", [uniqueEmail(), ["ZZ_PLANNED"], null, null, null]), "INVALID_APP");
     await expectFail(rpc(root.id, "admin_create_invitation", [uniqueEmail(), ["APP01"], null, null, 500]), "INVALID_TTL");
   });
 });

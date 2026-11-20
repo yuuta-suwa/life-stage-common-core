@@ -1,5 +1,10 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20 (8) 外部サイトのアプリへのリンク（D-56）
+- migration 0017：APP03・LIFE ACCOUNTING の URL を登録、LIFE ACCOUNTING を公開中に。`admin_set_app_link`（Super Admin・MFA・理由必須・監査）。開発 DB に適用済み。
+- 入口 `/apps/<code>`：権限確認後に登録 URL へ移動（権限なしは 403）。アカウント画面に「外部サイトに移動します」、設定画面に表示名・リンクの編集欄。
+- テスト：DB 165 件合格（計画中アプリの付与不可は試験用アプリで検証に変更）、E2E app-links 4/4。
+
 ## 2026-11-20 (7) 管理者管理画面（D-55）
 - `/admin/admins`：Super Admin・Admin・Mentor の人数、任命フォーム、役割ごとの一覧と解任（理由つき）。Super Admin 以外には案内のみ表示。メニューに ADMINS を追加。
 - スマホ幅で管理メニューが横にはみ出す不具合を修正（`.shell` の列幅）。

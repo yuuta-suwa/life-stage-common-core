@@ -28,7 +28,7 @@ export default async function Home() {
         <div className="en">INVITATION ONLY</div>
         <h1>LIFE STAGE</h1>
         <p>
-          APP01〜APP03 共通のアクセス基盤です。ご利用には管理者からの招待が必要です。
+          LIFE STAGE の各アプリ（APP01〜APP03・LIFE ACCOUNTING）共通のアクセス基盤です。ご利用には管理者からの招待が必要です。
           <br />
           <span className="small">This service is invitation-only.</span>
         </p>

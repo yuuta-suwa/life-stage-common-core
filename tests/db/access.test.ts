@@ -39,9 +39,10 @@ describe("AT05/AT06 アプリ別アクセス権限", () => {
     )), /permission denied/);
   });
 
-  it("無効化されたアプリ（LIFE_ACCOUNTING）は付与不可", async () => {
+  it("無効（計画中）のアプリは付与不可", async () => {
+    await sql("insert into public.apps(code, name_en, name_ja, lifecycle, sort_order) values ('ZZ_PLANNED','PLANNED TEST','計画中（試験用）','planned',999) on conflict (code) do nothing");
     const u = await invitedUser(root.id, ["APP01"]);
-    await expectFail(rpc(root.id, "admin_set_entitlement", [u.id, "LIFE_ACCOUNTING", true, null]), "INVALID_APP");
+    await expectFail(rpc(root.id, "admin_set_entitlement", [u.id, "ZZ_PLANNED", true, null]), "INVALID_APP");
   });
 });
 

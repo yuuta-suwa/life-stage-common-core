@@ -64,17 +64,18 @@ describe("Data API 公開範囲（旧既定の自動 GRANT を再現した DB �
 });
 
 describe("アプリ登録マスター", () => {
-  it("初期登録：APP01〜03 は active、LIFE_ACCOUNTING は planned で利用者に表示されない", async () => {
-    const apps = await sql<{ code: string; lifecycle: string; is_active: boolean }>("select code, lifecycle, is_active from public.apps order by sort_order");
+  it("登録状況：APP01〜03・LIFE_ACCOUNTING（0017 で公開中）は active で利用者に表示される", async () => {
+    const apps = await sql<{ code: string; lifecycle: string; is_active: boolean }>("select code, lifecycle, is_active from public.apps where code in ('APP01','APP02','APP03','LIFE_ACCOUNTING') order by sort_order");
     expect(apps).toEqual([
       { code: "APP01", lifecycle: "active", is_active: true },
       { code: "APP02", lifecycle: "active", is_active: true },
       { code: "APP03", lifecycle: "active", is_active: true },
-      { code: "LIFE_ACCOUNTING", lifecycle: "planned", is_active: false },
+      { code: "LIFE_ACCOUNTING", lifecycle: "active", is_active: true },
     ]);
     const u = await invitedUser(root.id, ["APP01"]);
     const access = await rpc<{ apps: AppAccess[] }>(u.id, "my_access");
-    expect(access.apps.map((a) => a.code)).toEqual(["APP01", "APP02", "APP03"]);
+    expect(access.apps.map((a) => a.code).filter((c) => ["APP01", "APP02", "APP03", "LIFE_ACCOUNTING"].includes(c))).toEqual(["APP01", "APP02", "APP03", "LIFE_ACCOUNTING"]);
+    expect(access.apps.find((a) => a.code === "LIFE_ACCOUNTING")?.granted).toBe(false);
   });
 
   it("新アプリは migration なしの登録（INSERT）だけで権限付与・判定が機能する（コード変更不要）", async () => {
@@ -192,5 +193,31 @@ describe("連携経路のマスター化", () => {
     const u = await invitedUser(root.id, ["APP01"]);
     await expectFail(rpc(u.id, "confirm_snapshot", ["APP01", "life_blueprint", "9.9", validBlueprint()]), "INVALID_SNAPSHOT_TYPE");
     await expectFail(rpc(u.id, "confirm_snapshot", ["APP01", "growth_plan", "1.0", {}]), "INVALID_SNAPSHOT_TYPE");
+  });
+});
+
+describe("アプリのリンク（0017）", () => {
+  it("APP03・LIFE ACCOUNTING に外部サイトの URL が登録され、LIFE ACCOUNTING は公開中", async () => {
+    const rows = await sql<{ code: string; base_url: string; is_active: boolean; name_ja: string }>(
+      "select code, base_url, is_active, name_ja from public.apps where code in ('APP03','LIFE_ACCOUNTING') order by code");
+    expect(rows.map((r) => r.base_url)).toEqual(["https://app03-make-it-real-work.suwayuuta.chatgpt.site", "https://life-accounting-yuta.suwayuuta.chatgpt.site"]);
+    expect(rows[1].is_active).toBe(true);
+    expect(rows[1].name_ja).toBe("人生経理＋未来家計簿");
+  });
+
+  it("表示名・リンクの変更は Super Admin のみ。https 以外・理由なしは拒否し、変更は監査記録", async () => {
+    const admin = await invitedUser(root.id, [], { role: "admin" });
+    await expectFail(rpc(admin.id, "admin_set_app_link", ["LIFE_ACCOUNTING", "人生経理", "https://example.com", "x"]), "FORBIDDEN");
+    await expectFail(rpc(root.id, "admin_set_app_link", ["LIFE_ACCOUNTING", "人生経理", "http://example.com", "x"]), "INVALID_URL");
+    await expectFail(rpc(root.id, "admin_set_app_link", ["LIFE_ACCOUNTING", "人生経理", "javascript:alert(1)", "x"]), "INVALID_URL");
+    await expectFail(rpc(root.id, "admin_set_app_link", ["LIFE_ACCOUNTING", "人生経理", "https://example.com", ""]), "REASON_REQUIRED");
+    await expectFail(rpc(root.id, "admin_set_app_link", ["LIFE_ACCOUNTING", "人生経理", "https://example.com", "x"], "aal1"), /MFA_REQUIRED|FORBIDDEN/);
+    const [before] = await sql<{ base_url: string; name_ja: string }>("select base_url, name_ja from public.apps where code = 'LIFE_ACCOUNTING'");
+    await rpc(root.id, "admin_set_app_link", ["LIFE_ACCOUNTING", "人生経理（試験）", "https://example.com/la", "テスト"]);
+    const [after] = await sql<{ base_url: string }>("select base_url from public.apps where code = 'LIFE_ACCOUNTING'");
+    expect(after.base_url).toBe("https://example.com/la");
+    const [log] = await sql<{ reason: string }>("select reason from public.audit_logs where action = 'app.link' and actor_id = $1 order by id desc limit 1", [root.id]);
+    expect(log.reason).toBe("テスト");
+    await rpc(root.id, "admin_set_app_link", ["LIFE_ACCOUNTING", before.name_ja, before.base_url, "元に戻す"]);
   });
 });

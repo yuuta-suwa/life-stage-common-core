@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { requirePage } from "@/lib/access";
 import { APP_CODE_PATTERN } from "@/lib/access-policy";
@@ -12,6 +12,8 @@ export default async function AppGate({ params }: { params: Promise<{ code: stri
   if (!APP_CODE_PATTERN.test(code)) notFound();
   const access = await requirePage({ kind: "app", code }, `/apps/${code}`);
   const app = access.apps.find((a) => a.code === code)!;
+  // 外部サイトのアプリ（base_url 登録済み）：利用権限を確認したうえで、そのサイトへ移動する
+  if (app.base_url && /^https:\/\//.test(app.base_url)) redirect(app.base_url);
   return (
     <main className="narrow">
       <section className="hero">

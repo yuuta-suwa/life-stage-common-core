@@ -121,6 +121,15 @@ export async function setAppLifecycle(formData: FormData) {
   back(formData, "/admin/settings", code ? `error=${code}` : "ok=lifecycle");
 }
 
+export async function setAppLink(formData: FormData) {
+  const app = String(formData.get("app_code") ?? "");
+  if (!/^[A-Z][A-Z0-9_]{1,31}$/.test(app)) back(formData, "/admin/settings", "error=NOT_FOUND");
+  const { code } = await call("admin_set_app_link", {
+    p_app_code: app, p_name_ja: String(formData.get("name_ja") ?? ""), p_base_url: String(formData.get("base_url") ?? ""), p_reason: reason(formData.get("reason")) ?? "",
+  });
+  back(formData, "/admin/settings", code ? `error=${code}` : "ok=app_link");
+}
+
 // ---------------- 担当 ----------------
 export async function setScope(formData: FormData) {
   const admin = uuid.safeParse(formData.get("admin_id"));

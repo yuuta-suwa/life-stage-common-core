@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Flash, PageHeader, SectionTitle, formatDateTime } from "@/components/ui";
 import { IntegrationTokenForm } from "@/components/integration-token-form";
 import { SubmitButton } from "@/components/submit-button";
-import { revokeIntegrationToken, setAppLifecycle, updateTtl } from "../actions";
+import { revokeIntegrationToken, setAppLifecycle, setAppLink, updateTtl } from "../actions";
 
 const LIFECYCLE: Record<string, { label: string; tone: string }> = {
   planned: { label: "計画中 Planned", tone: "plain" },
@@ -21,7 +21,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const supabase = await createClient();
   const [{ data: settings }, { data: apps }] = await Promise.all([
     supabase.from("app_settings").select("key, value, updated_at"),
-    supabase.from("apps").select("code, name_en, name_ja, is_active, lifecycle, data_classification, description").order("sort_order"),
+    supabase.from("apps").select("code, name_en, name_ja, is_active, lifecycle, data_classification, description, base_url").order("sort_order"),
   ]);
   const get = (k: string) => (settings ?? []).find((s) => s.key === k)?.value;
   const superAdmin = isSuperAdmin(access);
@@ -113,6 +113,36 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           </tbody>
         </table>
       </div>
+      {superAdmin ? (
+        <>
+          <SectionTitle en="APP LINKS" ja="アプリの表示名とリンク（Super Admin）" />
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>コード</th><th>表示名・サイトの URL・理由</th></tr></thead>
+              <tbody>
+                {(apps ?? []).map((a) => (
+                  <tr key={`link-${a.code}`}>
+                    <td className="mono">{a.code}<div className="small muted">{a.base_url ? "外部サイト" : "共通基盤内"}</div></td>
+                    <td>
+                      <form action={setAppLink} className="row">
+                        <input type="hidden" name="app_code" value={a.code} />
+                        <input type="hidden" name="back" value="/admin/settings" />
+                        <input name="name_ja" type="text" defaultValue={a.name_ja} required maxLength={120} aria-label={`${a.code} の表示名`} style={{ maxWidth: 200 }} />
+                        <input name="base_url" type="url" defaultValue={a.base_url ?? ""} placeholder="https://（空欄＝共通基盤内のアプリ）" pattern="https://.*" maxLength={2048} aria-label={`${a.code} のサイトの URL`} style={{ minWidth: 260 }} />
+                        <input name="reason" type="text" placeholder="理由（必須）" required maxLength={500} aria-label={`${a.code} の変更理由`} style={{ maxWidth: 180 }} />
+                        <SubmitButton className="btn small" confirm={`${a.code} の表示名・リンクを変更します。よろしいですか？`}>保存</SubmitButton>
+                      </form>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="small muted" style={{ marginTop: 8 }}>
+            URL を登録したアプリは、アカウント画面の「開く」から、利用権限を確認したうえでそのサイトへ移動します。外部サイト側のログイン・権限は、そのサイトの仕組みに従います。
+          </p>
+        </>
+      ) : null}
       <p className="small muted" style={{ marginTop: 8 }}>
         新しいアプリ（APP04 以降・LIFE ACCOUNTING 等）は「計画中」で登録し、発注者承認後に「試験運用」→「公開中」へ変更します。
         「試験運用」「公開中」のアプリだけが利用者に表示され、権限を付与できます。変更はすべて操作履歴に記録されます。
