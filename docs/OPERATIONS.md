@@ -36,7 +36,7 @@
 | 期限切れ・誤送信の再発行 | INVITATIONS | 「再発行」→新しいリンクを送付（旧リンクは無効） |
 | アプリ権限の追加・取消 | PERMISSIONS｜権限管理 | 利用者×アプリのボタンを押す（即時反映） |
 | 一時停止・再開 | USERS → 詳細 | 理由を入力して「一時停止」／「利用再開」（データは保持） |
-| 役割（Admin/Mentor）の付与 | USERS → 詳細（Super Admin のみ） | 「admin を付与」等 |
+| 管理者の任命・解任（Super Admin／Admin／Mentor） | ADMINS｜管理者管理（Super Admin のみ） | 対象の方と役割を選んで「任命する」。解任は各行で理由を入れて「解任」。自分自身は解任できない（別の Super Admin が操作）。利用者詳細の「役割」欄からも可 |
 | Admin の担当範囲 | ASSIGNMENTS（Super Admin のみ） | Admin と利用者を選んで追加 |
 | メンター等の担当 | ASSIGNMENTS | 担当者・利用者・区分を選んで設定。解除すると共有も撤回 |
 | 削除手続き | USERS → 詳細 | 申請（理由必須）→ Super Admin が対象メールを再入力して確定 |

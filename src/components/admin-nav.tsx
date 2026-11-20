@@ -7,6 +7,7 @@ const ITEMS = [
   { href: "/admin/users", en: "USERS", ja: "利用者管理" },
   { href: "/admin/invitations", en: "INVITATIONS", ja: "招待管理" },
   { href: "/admin/permissions", en: "PERMISSIONS", ja: "権限管理" },
+  { href: "/admin/admins", en: "ADMINS", ja: "管理者管理" },
   { href: "/admin/assignments", en: "ASSIGNMENTS", ja: "担当者管理" },
   { href: "/admin/transfers", en: "TRANSFERS", ja: "連携状況" },
   { href: "/admin/audit", en: "AUDIT LOGS", ja: "操作履歴" },

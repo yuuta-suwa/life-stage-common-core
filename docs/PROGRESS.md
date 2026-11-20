@@ -1,5 +1,10 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20 (7) 管理者管理画面（D-55）
+- `/admin/admins`：Super Admin・Admin・Mentor の人数、任命フォーム、役割ごとの一覧と解任（理由つき）。Super Admin 以外には案内のみ表示。メニューに ADMINS を追加。
+- スマホ幅で管理メニューが横にはみ出す不具合を修正（`.shell` の列幅）。
+- E2E `tests/e2e/admins.e2e.mjs` 6/6 合格（任命・解任・監査・Admin の拒否・自分は解任不可・最後の Super Admin の案内・スマホではみ出しなし）。
+
 ## 2026-11-20 (6) Super Admin の自己設定（D-54）
 - migration 0016：`admin_list_users` が Super Admin には自分も返す（is_self）。`admin_set_app_role` は Super Admin に限り自分を対象にできる。
 - 管理画面：USERS・PERMISSIONS に自分の行（「あなた」）を表示。自分の詳細画面でアプリ別権限・アプリ固有ロールを設定可（状態・管理ロール・削除は不可の案内を表示）。
