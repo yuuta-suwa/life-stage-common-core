@@ -146,12 +146,12 @@ describe("hasAnyAnswer（未入力のまま確定させない）", () => {
 });
 
 describe("visionPrompt（LEVEL03 ChatGPT 投げ込みガイド）", () => {
-  it("願望・雰囲気・条件（文字なし・実在人物に見せない・4:5）を含み、改行を潰して長さを制限する", async () => {
+  it("願望・雰囲気・条件（文字なし・実在人物に見せない・横4:3）を含み、改行を潰して長さを制限する", async () => {
     const { visionPrompt } = await import("@/features/app01/logic");
     const p = visionPrompt({ desire: "家族で海の見える家に\n暮らす", style: "watercolor", scene: "x".repeat(500) });
     expect(p).toContain("■ 叶えたい願望：家族で海の見える家に 暮らす");
     expect(p).toContain("水彩画");
-    expect(p).toContain("4:5");
+    expect(p).toContain("横長（4:3）"); expect(p).not.toContain("4:5");
     expect(p).toContain("文字・ロゴ・透かしを入れない");
     expect(p).toContain("実在の特定の人物に見えない");
     expect(p).toContain("x".repeat(200));
