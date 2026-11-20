@@ -1,5 +1,10 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20 (5) APP03 1.0.9 連携表示と本物の Worker での結合試験
+- APP03 ソースを改修（表示専用の src/linked.js、ホーム・マップ・マス詳細に APP01／APP02 の内容を表示）し ZIP で納品。APP03 側試験 58/58、verify_restart PASS。
+- `tests/e2e/app03-real-worker.e2e.mjs` 追加：APP03 本物の Worker から共通基盤を呼ぶ結合試験 3/3 合格。
+- 未検証：本番 Sites からの実接続（トークン登録・本人照合・Sites への反映は発注者の操作）。
+
 ## 2026-11-20（4）｜APP01 → APP03
 - APP01 最終画面に「APP03 に渡す（任意・同意制）」、共通基盤に `/api/integrations/app03/app01`（必要最小限の項目のみ）。migration 0015 を開発 Supabase に適用。
 - テスト：単体・DB 162件、E2E APP01 34・APP02 19・APP02 Phase2 13・APP03 連携 7 件 全件合格。

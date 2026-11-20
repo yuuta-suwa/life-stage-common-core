@@ -38,5 +38,11 @@ APP03         → external_imports に保存（参照用。認定にはならな
 
 ## 4. 検証（2026-11-20）
 - DB テスト `tests/db/integration-app03.test.ts`：発行は Super Admin（MFA）のみ、平文を保存しない、同意なし・停止中・ID 不一致は空、不正・失効トークンの拒否、回数制限。
-- E2E `tests/e2e/app03-integration.e2e.mjs`：APP03 の同期処理（redirect:'error'・15秒・Bearer・1MB 上限・records 最大100件・id 200文字以内）を再現して 6/6 合格。HTTPS 必須の確認のみローカルでは未再現。
+- E2E `tests/e2e/app03-integration.e2e.mjs`：APP03 の同期処理（redirect:'error'・15秒・Bearer・1MB 上限・records 最大100件・id 200文字以内）を再現して 7/7 合格（APP01 エンドポイントと失効を含む）。HTTPS 必須の確認のみローカルでは未再現。
+- E2E `tests/e2e/app03-real-worker.e2e.mjs`（`APP03_SRC=<APP03 ソースのフォルダ>` を指定して実行）：APP03 本物の Worker（1.0.9）の同期処理から共通基盤のローカル環境を呼び、APP01・APP02 の取り込み2件・認定0件・再同期で重複なし・家計の非送信、ビルド済み画面での表示（ホームの理想、マップの APP02 目標、マス詳細、表示切替、スマホで横はみ出しなし）を確認して 3/3 合格。APP03 のソースは本リポジトリに含めない。
+
+## 5. APP03 1.0.9（表示側の改修、ZIP で納品）
+- ホーム「あなたの理想（APP01）」、マップ各マスに APP02 の目標（段階1〜10＝1〜10年目、目標LV、★重点）、列見出しに西暦、マス詳細に必要な経験・到達判断基準。セールス力の行は「APP03で設定」。
+- 連携データは参照表示のみ。認定・解放条件・審査・API・DB は変更なし。APP03 の試験 58/58、clean copy 再ビルド一致（verify_restart PASS）。
+
 - **未実施**：実際の APP03（Sites）からの呼び出し（トークン登録と本人照合が必要）。
