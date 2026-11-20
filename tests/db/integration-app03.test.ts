@@ -2,7 +2,7 @@
  * APP03 連携（機械間）：連携トークンの発行・失効と、同意済みの承認済み計画だけの受け渡し
  */
 import { describe, it, expect, beforeAll } from "vitest";
-import { expectFail, invitedUser, rpc, selectAs, sql, superAdmin, validGrowthPlan } from "./helpers";
+import { expectFail, invitedUser, rpc, selectAs, sql, superAdmin, validBlueprint, validGrowthPlan } from "./helpers";
 
 type U = { id: string; email: string };
 let root: U;
@@ -70,5 +70,35 @@ describe("APP03 からの取得", () => {
     const r = await rpc<{ token: string }>(root.id, "admin_issue_integration_token", ["APP03", "rate"]);
     for (let i = 0; i < 60; i++) await fetchAs(r.token, u.id);
     await expectFail(fetchAs(r.token, u.id), "RATE_LIMITED");
+  });
+});
+
+describe("APP01 → APP03（人生設計）", () => {
+  const fetchBp = (token: string, ext: string) => rpc<{ records: { payload: { life_purpose: string } }[] }>(null, "integration_app03_life_blueprint", [token, ext], "aal1");
+
+  it("本人が APP03 に渡すことに同意し成功した人生設計だけを返す。APP02 用の取得には混ざらない", async () => {
+    const { token } = await rpc<{ token: string }>(root.id, "admin_issue_integration_token", ["APP03", "bp"]);
+    const u = await invitedUser(root.id, ["APP01", "APP03"]);
+    const snap = await rpc<{ snapshot_id: string }>(u.id, "confirm_snapshot", ["APP01", "life_blueprint", "1.0", JSON.stringify(validBlueprint())], "aal1");
+    expect((await fetchBp(token, u.id)).records).toHaveLength(0); // 同意前
+    const tr = await rpc<{ status: string }>(u.id, "request_transfer", [snap.snapshot_id, "APP03", "1.0", "2026-11"], "aal1");
+    expect(tr.status).toBe("succeeded");
+    const r = await fetchBp(token, u.id);
+    expect(r.records).toHaveLength(1);
+    expect(r.records[0].payload.life_purpose).toBe("大切な人と豊かに生きる");
+    expect((await fetchAs(token, u.id)).records).toHaveLength(0); // APP02 の計画としては返らない
+  });
+
+  it("APP03 の利用権限がないと引き継ぎは失敗し、何も返らない。APP02 の権限だけを持つ旧トークンでは読めない", async () => {
+    const { token } = await rpc<{ token: string }>(root.id, "admin_issue_integration_token", ["APP03", "bp2"]);
+    const u = await invitedUser(root.id, ["APP01"]);
+    const snap = await rpc<{ snapshot_id: string }>(u.id, "confirm_snapshot", ["APP01", "life_blueprint", "1.0", JSON.stringify(validBlueprint())], "aal1");
+    const tr = await rpc<{ status: string; error?: string }>(u.id, "request_transfer", [snap.snapshot_id, "APP03", "1.0", "2026-11"], "aal1");
+    expect(tr.status).toBe("failed");
+    expect((await fetchBp(token, u.id)).records).toHaveLength(0);
+    // APP02 の権限だけのトークン（0014 時点の発行）を模擬
+    const old = await rpc<{ token: string; id: string }>(root.id, "admin_issue_integration_token", ["APP03", "old"]);
+    await sql("update public.integration_clients set scopes = array['app02_growth_plan'] where id = $1", [old.id]);
+    await expectFail(fetchBp(old.token, u.id), "INVALID_TOKEN");
   });
 });

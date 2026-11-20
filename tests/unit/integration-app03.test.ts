@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { TOKEN_PATTERN, toApp03Record } from "@/lib/integration-app03";
+import { TOKEN_PATTERN, toApp03BlueprintRecord, toApp03Record } from "@/lib/integration-app03";
 
 const abilities = ["attraction", "recruitment", "education", "development", "operations", "management"];
 const payload = {
@@ -25,5 +25,23 @@ describe("APP03 records 形式への変換（APP03 docs/INTEGRATION_CONTRACT.md�
     expect(TOKEN_PATTERN.test("lsc_app03_" + "a".repeat(43))).toBe(true);
     expect(TOKEN_PATTERN.test("Bearer x")).toBe(false);
     expect(TOKEN_PATTERN.test("lsc_app03_short")).toBe(false);
+  });
+});
+
+describe("APP01 人生設計の APP03 用 record（必要最小限）", () => {
+  it("目的・願望・目標・優先能力・最初の行動だけを渡し、家計・ギャップ分析・画像参照は渡さない", () => {
+    const r = toApp03BlueprintRecord({ snapshot_id: "22222222-2222-2222-2222-222222222222", version: 1, received_at: "2026-11-20T01:00:00Z", payload: {
+      life_purpose: "大切な人と豊かに生きる", priority_desires: ["家族旅行"], goals: [{ type: "long", description: "独立", deadline: "2031-12-31" }],
+      priority_capabilities: ["education"], first_action: "毎朝30分学習", first_action_date: "2026-12-01",
+      // @ts-expect-error 渡してはいけない項目が入力に含まれていても、出力に出ないこと
+      budget_summary: { target_assets: 30000000 }, gap_analysis: { money: "差額あり" }, vision_board_asset_refs: ["uid/APP01/vision/a.png"],
+    } });
+    expect(r.id).toBe("app01-life-blueprint-22222222-2222-2222-2222-222222222222");
+    expect(r.priority_capabilities).toEqual(["教育力"]);
+    expect(r.goals[0]).toMatchObject({ type_label: "長期", description: "独立" });
+    const json = JSON.stringify(r);
+    expect(json).not.toContain("30000000");
+    expect(json).not.toContain("差額あり");
+    expect(json).not.toContain("vision/a.png");
   });
 });

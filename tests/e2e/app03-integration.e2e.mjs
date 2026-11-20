@@ -27,8 +27,8 @@ async function rpcAs(uid, fn, args = [], aal = "aal2") {
 }
 
 /** APP03 worker/workflow.js の同期処理の再現（HTTPS チェックを除く） */
-async function app03Sync(token, externalUserId) {
-  const response = await fetch(ENDPOINT, {
+async function app03Sync(token, externalUserId, endpoint = ENDPOINT) {
+  const response = await fetch(endpoint, {
     method: "POST", redirect: "error", signal: AbortSignal.timeout(15000),
     headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
     body: JSON.stringify({ externalUserId, certifications: [{ id: "c1", target_key: "level:L2-1" }] }),
@@ -69,7 +69,7 @@ async function main() {
       await sql("insert into public.admin_roles(user_id, role) values($1,'super_admin')", [ids[ADMIN]]);
     }
     for (const e of [USER, OTHER]) {
-      const inv = await rpcAs(ids[ADMIN], "admin_create_invitation", [e, ["APP02", "APP03"], null, "e2e", 72]);
+      const inv = await rpcAs(ids[ADMIN], "admin_create_invitation", [e, ["APP01", "APP02", "APP03"], null, "e2e", 72]);
       await rpcAs(ids[e], "accept_invitation", [inv.token], "aal1");
     }
     const plan = { plan_id: crypto.randomUUID(), vision_version: 1, start_year: 2028, mode: "CONVICTION", focus_abilities: ["attraction"], focus_by_year: { "1": ["attraction"] }, commit_year: 2035,
@@ -128,6 +128,22 @@ async function main() {
     expect(res.status === 405, `GET が拒否されません：${res.status}`);
   });
 
+  await step("APP01 → APP03：同意して渡した人生設計を APP03 の「APP01：理想を参照」（再現）で取得。家計・ギャップ・画像は含まれない", async () => {
+    const bp = { blueprint_id: crypto.randomUUID(), life_purpose: "家族と挑戦を楽しむ", priority_desires: ["海の見える家"], budget_summary: { target_assets: 30000000 },
+      vision_board_asset_refs: [`${ids[USER]}/APP01/vision/x.png`], gap_analysis: { money: "差額500万円" }, goals: [{ type: "long", description: "事業を持つ", deadline: "2036-04-01" }],
+      priority_capabilities: ["attraction"], first_action: "週3回の発信", first_action_date: "2026-12-01", consent_version: "2026-11" };
+    const s = await rpcAs(ids[USER], "confirm_snapshot", ["APP01", "life_blueprint", "1.0", JSON.stringify(bp)], "aal1");
+    const before = await app03Sync(token, ids[USER], `${env.base}/api/integrations/app03/app01`);
+    expect(before.records.length === 0, "同意前に人生設計が渡りました");
+    const t = await rpcAs(ids[USER], "request_transfer", [s.snapshot_id, "APP03", "1.0", "2026-11"], "aal1");
+    expect(t.status === "succeeded", "APP01 → APP03 の引き継ぎに失敗");
+    const r = await app03Sync(token, ids[USER], `${env.base}/api/integrations/app03/app01`);
+    expect(r.records.length === 1 && r.records[0].kind === "APP01_LIFE_BLUEPRINT" && r.records[0].life_purpose === "家族と挑戦を楽しむ", "人生設計の record が不正");
+    expect(r.records[0].priority_capabilities[0] === "集客力", "優先能力が APP03 の能力名になっていません");
+    const json = JSON.stringify(r.records);
+    expect(!json.includes("30000000") && !json.includes("差額500万円") && !json.includes("vision/x.png"), "渡さない項目が含まれています");
+  });
+
   await step("管理画面で失効 → APP03 の同期は拒否される。一覧に最終利用日時が残る", async () => {
     const admin = await loginContext(browser, ADMIN, { mfa: true });
     const p = await admin.newPage();
@@ -138,6 +154,7 @@ async function main() {
     await row.getByRole("button", { name: "失効" }).click();
     await p.waitForURL(/ok=token_revoked/);
     expect((await app03Sync(token, ids[USER])).status === 401, "失効後も取得できました");
+    expect((await app03Sync(token, ids[USER], `${env.base}/api/integrations/app03/app01`)).status === 401, "失効後も APP01 を取得できました");
     await admin.close();
   });
 

@@ -46,3 +46,29 @@ export function toApp03Record(row: { snapshot_id: string; version: number; recei
     capabilities,
   };
 }
+
+/* ---------- APP01 → APP03：人生設計（必要最小限の項目だけを渡す） ---------- */
+type Blueprint = {
+  life_purpose?: string; priority_desires?: string[]; goals?: { type: string; description: string; deadline: string | null }[];
+  priority_capabilities?: string[]; first_action?: string; first_action_date?: string | null;
+};
+const GOAL_TYPE: Record<string, string> = { long: "長期", mid: "中期", short: "短期" };
+
+export function toApp03BlueprintRecord(row: { snapshot_id: string; version: number; received_at: string; payload: Blueprint }) {
+  const p = row.payload;
+  return {
+    id: `app01-life-blueprint-${row.snapshot_id}`,
+    kind: "APP01_LIFE_BLUEPRINT",
+    schema: "life_blueprint/1.0",
+    title: `APP01 人生設計 MY LIFE BLUEPRINT（第${row.version}版）`,
+    note: "APP01 で本人が完成させた人生設計（理想）です。APP03 の認定・実績ではありません。家計・資産・人間関係の詳細やビジョンボードの画像は含めていません。",
+    version: row.version,
+    delivered_at: row.received_at,
+    life_purpose: p.life_purpose ?? "",
+    priority_desires: (p.priority_desires ?? []).slice(0, 10),
+    goals: (p.goals ?? []).map((g) => ({ type: g.type, type_label: GOAL_TYPE[g.type] ?? g.type, description: g.description, deadline: g.deadline })),
+    priority_capabilities: (p.priority_capabilities ?? []).map((c) => APP03_CAPABILITY[c] ?? c),
+    first_action: p.first_action ?? "",
+    first_action_date: p.first_action_date ?? null,
+  };
+}

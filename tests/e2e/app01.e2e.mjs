@@ -462,6 +462,26 @@ async function main() {
     expect(!(await p.locator("main").innerText()).includes("再確認が必要"), "再完成後も要再確認のままです");
   });
 
+  await step("APP01 → APP03：渡す内容・渡さない内容を示して同意 → APP03 権限なしで失敗・保持 → 付与後の再試行で成功（家計等は渡らない）", async () => {
+    const p = await user.newPage();
+    await p.goto("/apps/APP01/final");
+    const text = await p.locator("#app03").innerText();
+    expect(text.includes("渡す内容") && text.includes("渡さない内容") && text.includes("未来家計簿"), "APP03 への受け渡しの説明が不足");
+    await p.locator('input[name="consent_app03"]').check();
+    await p.getByRole("button", { name: "APP03 に渡す" }).click();
+    await p.waitForURL(/transfer3=/);
+    expect((await p.locator("#app03").innerText()).includes("APP03 の利用権限がまだ付与されていません"), "APP03 権限なしの案内がありません");
+    const page2 = await admin.newPage();
+    await page2.goto(`/admin/users/${ids[USER]}`);
+    await page2.locator('form:has(input[name="app_code"][value="APP03"]) button').click();
+    await page2.waitForLoadState("networkidle");
+    await p.getByRole("button", { name: "受け渡しを再試行する" }).click();
+    await p.waitForURL(/transfer3=succeeded/);
+    const [inbox] = await sql("select payload from public.transfer_inbox t join public.data_transfers d on d.id=t.transfer_id where t.user_id=$1 and t.target_app='APP03' and d.source_app='APP01'", [ids[USER]]);
+    expect(inbox?.payload?.life_purpose !== undefined, "APP03 宛ての人生設計が届いていません");
+    await shot(p, "15c-app03-handoff");
+  });
+
   await step("担当者（メンター）設定 → 本人が選んだ項目だけを共有 → メンターは共有分のみ閲覧・返信", async () => {
     mentor = await inviteAndAccept(MENTOR, [], "mentor");
     const page = await admin.newPage();

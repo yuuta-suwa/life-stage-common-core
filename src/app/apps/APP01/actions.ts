@@ -162,3 +162,27 @@ export async function sendFeedback(formData: FormData) {
   const { error } = await supabase.rpc("app01_add_feedback", { p_share_id: id.data, p_comment: comment.slice(0, 2000) });
   redirect(`${BASE}/received?${error ? `error=${errorCode(error)}` : "ok=feedback"}`);
 }
+
+/** 本人の確認後に APP03（MAKE IT REAL）へ人生設計を渡す（同一スナップショットの再送は冪等） */
+export async function handoffToApp03(formData: FormData) {
+  const { supabase } = await guard();
+  if (formData.get("consent_app03") !== "on") redirect(`${BASE}/final?error=CONSENT_REQUIRED#app03`);
+  const { snapshot } = await loadBlueprintState(supabase);
+  if (!snapshot) redirect(`${BASE}/final?error=NOT_FOUND`);
+  if (isBlueprintStale(stageStates(await loadStageRows(supabase)), true)) redirect(`${BASE}/final?error=BLUEPRINT_STALE#app03`);
+  const { data, error } = await supabase.rpc("request_transfer", {
+    p_source_snapshot_id: snapshot.id, p_target_app: "APP03", p_schema_version: "1.0", p_consent_version: APP01_CONSENT_VERSION,
+  });
+  if (error) redirect(`${BASE}/final?error=${errorCode(error)}#app03`);
+  redirect(`${BASE}/final?transfer3=${(data as { status: string }).status}#app03`);
+}
+
+export async function retryHandoffApp03(formData: FormData) {
+  const { supabase } = await guard();
+  const id = z.uuid().safeParse(formData.get("transfer_id"));
+  if (!id.success) redirect(`${BASE}/final?error=NOT_FOUND#app03`);
+  if (isBlueprintStale(stageStates(await loadStageRows(supabase)), true)) redirect(`${BASE}/final?error=BLUEPRINT_STALE#app03`);
+  const { data, error } = await supabase.rpc("retry_transfer", { p_transfer_id: id.data });
+  if (error) redirect(`${BASE}/final?error=${errorCode(error)}#app03`);
+  redirect(`${BASE}/final?transfer3=${(data as { status: string }).status}#app03`);
+}

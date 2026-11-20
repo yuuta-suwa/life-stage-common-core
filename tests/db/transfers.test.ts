@@ -47,7 +47,7 @@ describe("AT12 APP01 → APP02", () => {
   it("経路・スキーマ版・同意の検証", async () => {
     const u = await invitedUser(root.id, ["APP01", "APP02", "APP03"]);
     const s = await rpc<Snap>(u.id, "confirm_snapshot", ["APP01", "life_blueprint", "1.0", validBlueprint()]);
-    await expectFail(rpc(u.id, "request_transfer", [s.snapshot_id, "APP03", "1.0", "2026-11"]), "INVALID_ROUTE");
+    await expectFail(rpc(u.id, "request_transfer", [s.snapshot_id, "LIFE_ACCOUNTING", "1.0", "2026-11"]), "INVALID_ROUTE");
     await expectFail(rpc(u.id, "request_transfer", [s.snapshot_id, "APP02", "2.0", "2026-11"]), "SCHEMA_VERSION_MISMATCH");
     await expectFail(rpc(u.id, "request_transfer", [s.snapshot_id, "APP02", "1.0", ""]), "CONSENT_REQUIRED");
   });

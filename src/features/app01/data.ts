@@ -64,3 +64,14 @@ export async function signedVisionUrls(supabase: SupabaseClient, keys: string[])
   for (const d of data ?? []) if (d.path && d.signedUrl) out[d.path] = d.signedUrl;
   return out;
 }
+
+/** 指定した人生設計の、APP03 への引き継ぎ状況 */
+export async function loadApp03Transfer(supabase: SupabaseClient, snapshotId: string) {
+  const { data } = await supabase
+    .from("data_transfers")
+    .select("id, status, attempt_count, last_error, completed_at")
+    .eq("source_snapshot_id", snapshotId)
+    .eq("target_app", "APP03")
+    .maybeSingle();
+  return data;
+}

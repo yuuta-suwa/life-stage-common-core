@@ -17,18 +17,24 @@ APP03         → external_imports に保存（参照用。認定にはならな
 - 送られてくる `certifications`（APP03 の認定）は保存しない（APP02 の承認済み計画を APP03 の実績で上書きしない。APP02 仕様 §21）。
 - すべての取得を監査ログ（`integration.fetch`）に記録。1トークンあたり1分60回まで。
 
+## 1-2. APP01 → APP03（人生設計）
+- 本人が APP01 の最終画面「APP03 MAKE IT REAL に渡す（任意）」で、渡す内容・渡さない内容を確認して同意（APP03 の利用権限が必要。権限がなければ失敗し、付与後に再試行できる）。
+- APP03 の「APP01：理想を参照」→ `POST https://life-stage-common-core.vercel.app/api/integrations/app03/app01`（同じトークン）。
+- 返す項目：人生の目的、優先したい願望、目標と期限、優先して身につけたい力（APP03 の能力名）、最初の行動と開始日。
+- **返さない項目**：未来家計簿・資産（budget_summary）、ギャップ分析（gap_analysis）、ビジョンボード画像の参照。
+
 ## 2. 設定手順
 1. **共通基盤（Super Admin・MFA）**：管理画面 SETTINGS →「外部アプリ連携（APP03）」→「APP03 連携トークンを発行」。表示は1回だけ。
 2. **APP03（ChatGPT Sites の実行時設定）**に2つ登録（チャット・メール・GitHub には貼らない）：
+   - `APP03_APP01_ENDPOINT` = `https://life-stage-common-core.vercel.app/api/integrations/app03/app01`
    - `APP03_APP02_ENDPOINT` = `https://life-stage-common-core.vercel.app/api/integrations/app03/app02`
    - `APP03_INTEGRATION_TOKEN` = 発行したトークン
-3. **APP03 の管理画面「外部アカウントの本人照合」**：利用者ごとに 接続元＝APP02、照合済み外部ユーザーID＝その人の共通基盤の「連携用ID」（共通基盤のアカウント画面に表示）。
+3. **APP03 の管理画面「外部アカウントの本人照合」**：利用者ごとに 接続元＝APP01 と APP02 のそれぞれについて、照合済み外部ユーザーID＝その人の共通基盤の「連携用ID」（共通基盤のアカウント画面に表示）。
 4. 本人が APP02 で計画を承認し「APP03 に引き継ぐ」→ APP03 で「APP02：計画参照・認定反映」。
 
 ## 3. 運用
 - 漏えいの疑い・担当者交代：SETTINGS の一覧から失効 → 再発行 → APP03 の設定を更新。
 - 一覧で最終利用日時を確認できる。
-- APP01（理想の人生）の APP03 への提供は未実装（APP01 → APP03 の本人同意の設計が必要）。
 
 ## 4. 検証（2026-11-20）
 - DB テスト `tests/db/integration-app03.test.ts`：発行は Super Admin（MFA）のみ、平文を保存しない、同意なし・停止中・ID 不一致は空、不正・失効トークンの拒否、回数制限。
