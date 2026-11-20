@@ -297,3 +297,14 @@ dl.answers dd { margin: 2px 0 0; white-space: pre-wrap; word-break: break-word; 
 .checklist { list-style: none; padding: 0; line-height: 2; }
 .pres-section textarea { width: 100%; }
 @media print { .gantt-wrap { overflow: visible; } }
+
+/* APP02 Phase 2 */
+.conflict-panel table td { max-width: 320px; word-break: break-word; }
+.report-button { margin-top: 8px; }
+.report-form { margin-top: 8px; }
+.plain-list { list-style: none; padding: 0; }
+.timeline { padding-left: 18px; line-height: 1.9; }
+.ladder { list-style: none; padding: 0; }
+.ladder-rung.done { border-left: 4px solid #2f8f55; } .ladder-rung.doing { border-left: 4px solid var(--gold); }
+.history-table td { vertical-align: top; }
+.save-state.offline, .save-state.conflict { color: #8a5a00; }

@@ -4,7 +4,8 @@ import { AiPanel, Quiz, StepSaveBar, TextArea, quizPassed, useStepData, type AiN
 import type { Json } from "../logic";
 
 export function AbilitiesForm({ initial, done, mode, prompt, next }: { initial: Json; done: boolean; mode: Mode; prompt: string; next: string }) {
-  const { data, set, state, flushNow } = useStepData("abilities", initial);
+  const sync = useStepData("abilities", initial);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const rel = (data.relations ?? {}) as Record<string, string>;
   const filled = ABILITY_CODES.filter((a) => (rel[a] ?? "").trim()).length;
@@ -26,7 +27,7 @@ export function AbilitiesForm({ initial, done, mode, prompt, next }: { initial: 
       <h2 className="section-title">CHECK<span>｜理解確認</span></h2>
       <Quiz items={ABILITY_QUIZ} value={data.quiz as number[] | undefined} onChange={(v) => set("quiz", v)} />
       <TextArea id="relation_summary" label="6つの力が、あなたの願望の実現にどうつながるかを、自分の言葉でまとめてください" sub="プレゼンの「6大能力の相互関係」に使います" value={data.relation_summary} onChange={(v) => set("relation_summary", v)} rows={4} />
-      <StepSaveBar step="abilities" state={state} missing={missing} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="abilities" sync={sync} missing={missing} done={done} next={next} />
     </>
   );
 }

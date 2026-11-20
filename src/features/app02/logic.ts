@@ -54,7 +54,7 @@ export function currentLevel(a: PositionAnswer | undefined): number {
 export type CellRow = {
   ability: AbilityCode; year_index: number; recommended_text: string; recommended_level: number;
   rec_experiences: string; rec_criteria: string; edited_text: string | null; target_level: number | null;
-  experiences: string | null; criteria: string | null;
+  experiences: string | null; criteria: string | null; updated_at?: string;
 };
 export type PlanRow = { plan_id: string; start_year: number; version: number; focus: Record<string, string[]>; commit_year: number | null; commit_needs_recheck: boolean };
 

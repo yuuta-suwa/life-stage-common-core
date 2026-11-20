@@ -5,7 +5,8 @@ import type { Json } from "../logic";
 export function VisionForm({ initial, done, hasBlueprint, desires, prompts, next }: {
   initial: Json; done: boolean; hasBlueprint: boolean; desires: string[]; prompts: { vision: string; priority: string }; next: string;
 }) {
-  const { data, set, state, flushNow } = useStepData("vision", initial);
+  const sync = useStepData("vision", initial);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const setAi = (k: string, n: AiNote) => set("ai", { ...ai, [k]: n });
   const missing = [
@@ -27,7 +28,7 @@ export function VisionForm({ initial, done, hasBlueprint, desires, prompts, next
         <input type="checkbox" checked={data.confirmed === true} onChange={(e) => set("confirmed", e.target.checked)} />
         この人生ビジョンを、APP02 の判断の軸にすることを確認しました（APP01 の元データは変更されません）
       </label>
-      <StepSaveBar step="vision" state={state} missing={missing} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="vision" sync={sync} missing={missing} done={done} next={next} />
     </>
   );
 }

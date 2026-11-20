@@ -1,5 +1,11 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20（2）｜APP02 Phase 2・不具合修正
+- APP01 LEVEL03 の ChatGPT ガイドを iPad 横向き（4:3）に変更。発注者に APP02 権限を付与（監査記録あり）。
+- APP02 Phase 2：共有（SHARED VISION）、伴走者レビュー、RETURN TO PURPOSE（報告・割当・修正・再分析・本人の決定・エスカレーション）、経営者志望ラダー、履歴と版の復元・全体初期化、競合検出とオフライン時の端末保持（docs/APP02.md）。
+- 不具合修正：①招待を受諾した利用者を削除できない（共通基盤、migration 0013）②APP02 の履歴がアカウント削除を妨げる ③ラダーの入力が保存されない（E2E で発見）。
+- テスト：単体・DB 153件、E2E APP01 33・APP02 19・APP02 Phase 2 13 件 全件合格。開発 Supabase に migration 0012・0013 を適用（Advisors ERROR 0）。
+
 ## 2026-11-20｜APP02 SELF-REALIZATION ENGINE（Phase 1）＋ APP01 ChatGPT ガイド
 - APP01 LEVEL03：ChatGPT 投げ込みガイド（ビジョン画像の作成文・手順・注意）を追加（D-43）。
 - APP02：S00〜S10・S12・S13・S18 を実装（詳細 docs/APP02.md）。migration 0011 を開発 Supabase に適用（RLS 全有効、Advisors ERROR 0）。

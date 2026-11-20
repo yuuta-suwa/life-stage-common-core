@@ -15,7 +15,8 @@ export function AnalysisForm({ initial, done, mode, desires, prompts, next }: {
 }) {
   const start = { ...initial };
   if (!Array.isArray(start.desires) || !start.desires.length) start.desires = (desires.length ? desires : [""]).slice(0, 5).map((d) => ({ desire: d }));
-  const { data, set, state, flushNow } = useStepData("analysis", start);
+  const sync = useStepData("analysis", start);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const rows = (data.desires ?? []) as DesireRow[];
   const rel = (data.relevance ?? {}) as Record<string, Rel>;
@@ -78,7 +79,7 @@ export function AnalysisForm({ initial, done, mode, desires, prompts, next }: {
       <AiPanel scene="analysis" prompt={prompts.analysis} note={ai.analysis} onChange={(n) => set("ai", { ...ai, analysis: n })} hint="上の根拠マップの下書きを ChatGPT と一緒に考えられます。" />
       <AiPanel scene="hidden" prompt={prompts.hidden} note={ai.hidden} onChange={(n) => set("ai", { ...ai, hidden: n })} />
       <TextArea id="story" label="私の自己実現ストーリー" sub="読み返したときに、なぜこの計画なのかが分かる一貫した文章（AI の提案を使う場合も、自分の言葉で）" value={data.story} onChange={(v) => set("story", v)} rows={6} max={4000} />
-      <StepSaveBar step="analysis" state={state} missing={missing} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="analysis" sync={sync} missing={missing} done={done} next={next} />
     </>
   );
 }

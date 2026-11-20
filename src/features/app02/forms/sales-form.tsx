@@ -4,7 +4,8 @@ import { AiPanel, Quiz, StepSaveBar, TextArea, quizPassed, useStepData, type AiN
 import type { Json } from "../logic";
 
 export function SalesForm({ initial, done, prompts, next }: { initial: Json; done: boolean; prompts: { sales: string; understanding: string }; next: string }) {
-  const { data, set, state, flushNow } = useStepData("sales", initial);
+  const sync = useStepData("sales", initial);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const missing = [
     ...(!String(data.relation ?? "").trim() ? ["あなたの願望との関係"] : []),
@@ -19,7 +20,7 @@ export function SalesForm({ initial, done, prompts, next }: { initial: Json; don
       <Quiz items={SALES_QUIZ} value={data.quiz as number[] | undefined} onChange={(v) => set("quiz", v)} />
       <TextArea id="own_words" label="セールス力が人生に役立つ理由を、自分の言葉で説明してください" sub="プレゼンの「セールス力を学ぶ理由」に使います" value={data.own_words} onChange={(v) => set("own_words", v)} rows={4} />
       <AiPanel scene="understanding" prompt={prompts.understanding} note={ai.understanding} onChange={(n) => set("ai", { ...ai, understanding: n })} hint="自分の説明に自信がないときに、理解度を確認する質問をもらえます。" />
-      <StepSaveBar step="sales" state={state} missing={missing} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="sales" sync={sync} missing={missing} done={done} next={next} />
     </>
   );
 }

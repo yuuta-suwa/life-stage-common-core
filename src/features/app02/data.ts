@@ -15,12 +15,17 @@ export async function loadSteps(supabase: SupabaseClient): Promise<StepRow[]> {
   return (data ?? []) as StepRow[];
 }
 export const stepData = (steps: StepRow[], code: string): Json => steps.find((s) => s.step_code === code)?.data ?? {};
+/** フォームの初期値：入力データ＋最後に読み込んだ時刻（競合検出用。__v は保存時に取り除く） */
+export const stepInit = (steps: StepRow[], code: string, userId: string): Json => {
+  const row = steps.find((s) => s.step_code === code);
+  return { ...(row?.data ?? {}), __v: row?.updated_at ?? null, __u: userId };
+};
 export const stepDone = (steps: StepRow[], code: string) => steps.some((s) => s.step_code === code && s.status === "done");
 
 export async function loadPlan(supabase: SupabaseClient): Promise<{ plan: PlanRow | null; cells: CellRow[] }> {
   const [{ data: plan }, { data: cells }] = await Promise.all([
     supabase.from("app02_plans").select("plan_id, start_year, version, focus, commit_year, commit_needs_recheck").maybeSingle(),
-    supabase.from("app02_plan_cells").select("ability, year_index, recommended_text, recommended_level, rec_experiences, rec_criteria, edited_text, target_level, experiences, criteria"),
+    supabase.from("app02_plan_cells").select("ability, year_index, recommended_text, recommended_level, rec_experiences, rec_criteria, edited_text, target_level, experiences, criteria, updated_at"),
   ]);
   return { plan: (plan as PlanRow | null) ?? null, cells: (cells ?? []) as CellRow[] };
 }

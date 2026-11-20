@@ -4,7 +4,8 @@ import { AiPanel, StepSaveBar, useStepData, type AiNote } from "../ui";
 import { currentLevel, provisionalLevel, type Json, type PositionAnswer } from "../logic";
 
 export function PositionForm({ initial, done, mode, prompts, next }: { initial: Json; done: boolean; mode: Mode; prompts: Record<AbilityCode, string>; next: string }) {
-  const { data, set, state, flushNow } = useStepData("position", initial);
+  const sync = useStepData("position", initial);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const get = (a: AbilityCode) => (data[a] ?? {}) as PositionAnswer;
   const upd = (a: AbilityCode, p: Partial<PositionAnswer>) => set(a, { ...get(a), ...p });
@@ -57,7 +58,7 @@ export function PositionForm({ initial, done, mode, prompts, next }: { initial: 
           </section>
         );
       })}
-      <StepSaveBar step="position" state={state} missing={missing.length ? [`未回答の能力：${missing.join("・")}`] : []} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="position" sync={sync} missing={missing.length ? [`未回答の能力：${missing.join("・")}`] : []} done={done} next={next} />
     </>
   );
 }

@@ -11,7 +11,8 @@ export function PresentationForm({ initial, done, drafts, prompt }: { initial: J
   if (!Array.isArray(start.sections) || start.sections.length !== PRESENTATION_SECTIONS.length) {
     start.sections = drafts.map((t) => ({ text: t, source: "draft" }));
   }
-  const { data, set, state, flushNow } = useStepData("presentation", start);
+  const sync = useStepData("presentation", start);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const secs = data.sections as Sec[];
   const setSec = (i: number, p: Sec) => set("sections", secs.map((s, j) => (j === i ? { ...s, ...p } : s)));
@@ -47,7 +48,7 @@ export function PresentationForm({ initial, done, drafts, prompt }: { initial: J
         この内容を自分の言葉として確認しました
       </label>
       <p className="small muted">スポンサー等との共有（SHARED VISION）は次のフェーズで提供予定です。現在は、全文コピーや印刷を使って、ご自身が選んだ相手に共有してください。</p>
-      <StepSaveBar step="presentation" state={state} missing={missing} done={done} flushNow={flushNow} next="/apps/APP02/complete" />
+      <StepSaveBar step="presentation" sync={sync} missing={missing} done={done} next="/apps/APP02/complete" />
     </>
   );
 }

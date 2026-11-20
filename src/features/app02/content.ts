@@ -198,3 +198,48 @@ export function recommendCells(current: Partial<Record<AbilityCode, number>> = {
 }
 
 export const TEMPLATE = T;
+
+/* ---------- §14 経営者志望ラダー（LEGACY 専用）。能力レベルだけで経営者の適格性を認定しない ---------- */
+export const LADDER = [
+  { no: 1, title: "経営の基本を理解する", needs: "経営原則・数字（売上・利益・費用）の基本を学び、自分の言葉で説明できる", evidence: "学んだ内容・説明した相手" },
+  { no: 2, title: "チーム・事業の一部を任される", needs: "役割・目標・行動を管理し、チームで成果を出す（運営力）", evidence: "担当範囲・期間・成果" },
+  { no: 3, title: "収益に責任を持つ", needs: "部門・プロジェクトの売上と利益に責任を持ち、継続して黒字にする", evidence: "対象・期間・売上と利益の推移" },
+  { no: 4, title: "人と資源の配分を判断する", needs: "採用・育成・投資・撤退などの経営判断を行い、結果を振り返る", evidence: "判断の内容・理由・結果" },
+  { no: 5, title: "事業の代表を担う準備ができている", needs: "後継者・幹部を育て、自分がいなくても回る体制をつくる", evidence: "育てた人・体制・継続している成果" },
+] as const;
+export const LADDER_STATUS = [["", "未着手"], ["doing", "取り組み中"], ["done", "経験あり"]] as const;
+export const LEGACY_PREREQUISITES = ["売上", "利益", "人材育成", "組織運営", "経営判断"] as const;
+
+/* ---------- §15・§18 共有できる項目（受信者の役割ごとの初期選択。センシティブ項目は初期 OFF） ---------- */
+export const SHARE_ITEMS = [
+  { key: "vision", label: "人生ビジョン（目的・優先したい願望・実現したい理由）", sensitive: false },
+  { key: "vision_constraints", label: "制約や気がかり", sensitive: true },
+  { key: "analysis", label: "自己実現ストーリーと実現条件", sensitive: false },
+  { key: "position", label: "6大能力の現在地（暫定）", sensitive: false },
+  { key: "environment", label: "成長環境の比較で分かったこと", sensitive: false },
+  { key: "roadmap", label: "10ヵ年計画（6能力×10年の到達目標）", sensitive: false },
+  { key: "focus", label: "年ごとの重点能力", sensitive: false },
+  { key: "commitment", label: "目標年度・成長方針・コミット", sensitive: false },
+  { key: "presentation", label: "自己実現プレゼン（全文）", sensitive: false },
+] as const;
+export type ShareKey = (typeof SHARE_ITEMS)[number]["key"];
+export const SHARE_DEFAULTS: Record<string, ShareKey[]> = {
+  leader: ["vision", "commitment", "presentation"],
+  trainer: ["position", "roadmap", "focus"],
+  mentor: ["vision", "analysis", "environment", "roadmap", "commitment"],
+};
+export const RELATION_LABEL: Record<string, string> = { mentor: "メンター", trainer: "トレーナー", leader: "リーダー", admin: "運営管理者" };
+export const RELATION_ROLE: Record<string, string> = {
+  leader: "日常の伴走・理解の確認・疑問の一次受付（本人の願望とのズレ、説明の分かりやすさ、進み具合）",
+  trainer: "能力・教育内容の妥当性の確認（セールス力・6大能力・レベル・推奨目標・成長順序）",
+  mentor: "人生と戦略の整合性の確認（人生ビジョン・価値観・10年計画・環境選択・長期の方向性）",
+};
+export const PURPOSE_REASONS = [
+  { value: "vision", label: "人生ビジョンとの不一致", route: "mentor" },
+  { value: "plan", label: "能力・成長計画の不一致", route: "trainer" },
+  { value: "fact", label: "事実・前提の誤り", route: "leader" },
+  { value: "other", label: "その他", route: "leader" },
+] as const;
+export const PURPOSE_STATUS: Record<string, string> = {
+  received: "受付", reviewing: "確認中", proposed: "修正案提示", awaiting_user: "本人確認待ち", done: "完了", on_hold: "保留",
+};

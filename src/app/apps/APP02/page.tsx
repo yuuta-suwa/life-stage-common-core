@@ -106,6 +106,14 @@ export default async function App02Home({ searchParams }: { searchParams: Promis
       </ol>
       <p className="small muted">未入力があっても、どの画面も閲覧できます。修了に必要な項目は各画面とSTEP の修了確認で示します。</p>
 
+      <h2 className="section-title">SUPPORT<span>｜伴走・履歴</span></h2>
+      <div className="row">
+        <Link className="btn ghost" href="/apps/APP02/share">共有（リーダー・トレーナー・メンター）</Link>
+        <Link className="btn ghost" href="/apps/APP02/purpose">軸に戻す（違和感の報告）</Link>
+        <Link className="btn ghost" href="/apps/APP02/history">履歴・復元</Link>
+        {ws.mode === "LEGACY" ? <Link className="btn ghost" href="/apps/APP02/ladder">経営者志望ラダー</Link> : null}
+      </div>
+
       <details className="card" style={{ marginTop: 16 }}>
         <summary>利用モードを変更する</summary>
         <form action={changeMode} className="row" style={{ marginTop: 8 }}>

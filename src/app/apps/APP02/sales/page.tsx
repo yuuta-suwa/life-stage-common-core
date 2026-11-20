@@ -1,7 +1,7 @@
 import { requirePage } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { SALES } from "@/features/app02/content";
-import { loadBlueprint, loadSteps, stepData, stepDone } from "@/features/app02/data";
+import { loadBlueprint, loadSteps, stepData, stepDone, stepInit } from "@/features/app02/data";
 import { scenePrompt, visionContext } from "@/features/app02/prompts";
 import { StepHeader, nextPath } from "@/features/app02/step-header";
 import { SalesForm } from "@/features/app02/forms/sales-form";
@@ -9,7 +9,7 @@ import { requireStarted } from "@/features/app02/guard";
 
 /** S03 セールス力理解（仕様 §05）：定義 → 例 → 本人との関係 → 条件と限界 → 理解確認 → 自分の言葉 */
 export default async function SalesPage() {
-  await requirePage({ kind: "app", code: "APP02" }, "/apps/APP02/sales");
+  const access = await requirePage({ kind: "app", code: "APP02" }, "/apps/APP02/sales");
   const supabase = await createClient();
   await requireStarted(supabase);
   const [steps, { bp }] = await Promise.all([loadSteps(supabase), loadBlueprint(supabase)]);
@@ -28,7 +28,7 @@ export default async function SalesPage() {
         <p className="small muted">あなたの願望に合わない例は気にしなくて構いません。</p>
       </div>
       <div className="notice info"><b>条件と限界</b>：{SALES.limits}</div>
-      <SalesForm initial={stepData(steps, "sales")} done={stepDone(steps, "sales")} next={nextPath("sales")}
+      <SalesForm initial={stepInit(steps, "sales", access.user_id!)} done={stepDone(steps, "sales")} next={nextPath("sales")}
         prompts={{ sales: scenePrompt("sales", { vision: ctx }), understanding: scenePrompt("understanding", { vision: ctx }) }} />
     </>
   );

@@ -6,6 +6,7 @@ import { resetCell, updateCell } from "@/app/apps/APP02/actions";
 import { ABILITY_CODES, CATEGORY_LABEL, LEVELS, abilityName, type AbilityCode, type Mode } from "./content";
 import { AiPanel } from "./ui";
 import { scenePrompt } from "./prompts";
+import { ReportButton } from "./report-button";
 import {
   calendarYear, cellCategory, cellCriteria, cellExperiences, cellLevel, cellText, type CellRow, type Finding, type PlanRow,
 } from "./logic";
@@ -98,6 +99,7 @@ export function RoadmapGrid({ plan, cells, mode, findings, visionCtx }: {
             ))}
           </ul>
           <p className="small muted">「実現できない」という判定ではありません。理由を確認し、必要なら計画を直してください（そのままでも進められます）。</p>
+          <ReportButton source="roadmap:consistency" original={{ findings: findings.map((f) => f.message) }} label="指摘内容に違和感を報告／軸に戻す" />
         </div>
       ) : <div className="notice ok">整合性の確認で指摘はありません。</div>}
     </>
@@ -113,6 +115,7 @@ function CellEditor({ cell, mode, year, prompt, onDone, onClose }: { cell: CellR
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [conflict, setConflict] = useState<{ text: string; level: number; updated_at?: string } | null>(null);
   const dirty = text !== cellText(cell) || level !== cellLevel(cell) || exp !== cellExperiences(cell) || cri !== cellCriteria(cell);
 
   useEffect(() => {
@@ -121,8 +124,8 @@ function CellEditor({ cell, mode, year, prompt, onDone, onClose }: { cell: CellR
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
-  async function save() {
-    setBusy(true); setMsg(null);
+  async function save(expected: string | null = cell.updated_at ?? null) {
+    setBusy(true); setMsg(null); setConflict(null);
     // 推奨と同じ値は「推奨のまま」（null）として保存し、推奨と本人編集を区別する
     const r = await updateCell({
       ability: cell.ability, year_index: cell.year_index,
@@ -131,8 +134,14 @@ function CellEditor({ cell, mode, year, prompt, onDone, onClose }: { cell: CellR
       experiences: exp.trim() === cell.rec_experiences ? "" : exp,
       criteria: cri.trim() === cell.rec_criteria ? "" : cri,
       reason,
+      expected,
     }).catch(() => ({ ok: false as const, code: "NETWORK" }));
     setBusy(false);
+    if (!r.ok && r.code === "CONFLICT" && "server" in r && r.server) {
+      const sv = r.server as Record<string, unknown>;
+      setConflict({ text: String(sv.edited_text ?? sv.recommended_text ?? ""), level: Number(sv.target_level ?? sv.recommended_level ?? 0), updated_at: sv.updated_at as string | undefined });
+      return;
+    }
     if (r.ok) onDone(`${abilityName(cell.ability, mode)}・${year}年を保存しました。`); else setMsg({ ok: false, text: `${messageFor(r.code).ja}（未保存）` });
   }
   async function reset() {
@@ -159,11 +168,21 @@ function CellEditor({ cell, mode, year, prompt, onDone, onClose }: { cell: CellR
       <div className="field"><label htmlFor="ce-cri">到達判断基準<small>第三者が見て判断できる、観察可能な状態</small></label><textarea id="ce-cri" rows={2} maxLength={1000} value={cri} onChange={(e) => setCri(e.target.value)} /></div>
       <div className="field"><label htmlFor="ce-reason">変更の理由<small>重要な変更のときは記録しておきましょう（任意）</small></label><input id="ce-reason" type="text" maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} /></div>
       <div className="row">
-        <button type="button" className="btn gold" disabled={busy || !dirty || !text.trim()} onClick={save}>{busy ? "保存中…" : "このセルを保存"}</button>
+        <button type="button" className="btn gold" disabled={busy || !dirty || !text.trim()} onClick={() => void save()}>{busy ? "保存中…" : "このセルを保存"}</button>
         <button type="button" className="btn ghost" disabled={busy} onClick={reset}>推奨に戻す</button>
         {dirty ? <span className="small warn-text" role="status">未保存の変更があります</span> : null}
       </div>
       {msg ? <div className={`notice ${msg.ok ? "ok" : "error"}`} role="status">{msg.text}</div> : null}
+      {conflict ? (
+        <div className="notice warn" role="alert">
+          別の端末・タブで、このセルが先に更新されています（保存されている内容：「{conflict.text}」LV{conflict.level}）。上書きはしていません。
+          <div className="row" style={{ marginTop: 8 }}>
+            <button type="button" className="btn small" onClick={() => void save(conflict.updated_at ?? null)}>この画面の内容で保存する</button>
+            <button type="button" className="btn small ghost" onClick={() => { setConflict(null); onDone("保存されている内容を表示しています。"); }}>保存されている内容を使う</button>
+          </div>
+        </div>
+      ) : null}
+      <ReportButton source={`roadmap:${cell.ability}:${cell.year_index}`} original={{ recommended: cell.recommended_text, recommended_level: cell.recommended_level }} label="この推奨に違和感を報告／軸に戻す" />
       <AiPanel scene="cell" prompt={prompt} />
     </section>
   );

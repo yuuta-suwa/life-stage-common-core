@@ -9,7 +9,8 @@ import type { Json, PlanRow } from "../logic";
 
 export function CommitmentForm({ initial, done, mode, plan, next }: { initial: Json; done: boolean; mode: Mode; plan: PlanRow | null; next: string }) {
   const router = useRouter();
-  const { data, set, state, flushNow } = useStepData("commitment", initial);
+  const sync = useStepData("commitment", initial);
+  const { data, set } = sync;
   const [year, setYear] = useState<string>(plan?.commit_year ? String(plan.commit_year) : "");
   const [reason, setReason] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -38,7 +39,7 @@ export function CommitmentForm({ initial, done, mode, plan, next }: { initial: J
             <div className="field" style={{ flex: "0 1 240px" }}>
               <label htmlFor="commit-year">{label}<small>10ヵ年計画の範囲内</small></label>
               <select id="commit-year" value={year} onChange={(e) => setYear(e.target.value)}>
-                <option value="">設定しない</option>
+                <option value="">{mode === "LEGACY" ? "コミットしない" : "設定しない"}</option>
                 {Array.from({ length: 10 }, (_, i) => plan.start_year + i).map((y) => <option key={y} value={y}>{y}年（{y - plan.start_year + 1}年目）</option>)}
               </select>
             </div>
@@ -59,7 +60,7 @@ export function CommitmentForm({ initial, done, mode, plan, next }: { initial: J
         <input type="checkbox" checked={data.decided === true} onChange={(e) => set("decided", e.target.checked)} />
         この方針とコミットは、誰かに決められたものではなく、自分の意思で決めました
       </label>
-      <StepSaveBar step="commitment" state={state} missing={missing} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="commitment" sync={sync} missing={missing} done={done} next={next} />
     </>
   );
 }

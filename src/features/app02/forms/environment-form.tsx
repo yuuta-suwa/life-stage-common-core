@@ -7,7 +7,8 @@ const RATINGS = [["", "未確認"], ["4", "◎ 十分"], ["3", "○ 概ね"], ["
 type Cell = { rating?: string; note?: string };
 
 export function EnvironmentForm({ initial, done, prompts, next }: { initial: Json; done: boolean; prompts: { environment: string; compare: string }; next: string }) {
-  const { data, set, state, flushNow } = useStepData("environment", initial);
+  const sync = useStepData("environment", initial);
+  const { data, set } = sync;
   const ai = (data.ai ?? {}) as Record<string, AiNote>;
   const grid = (data.grid ?? {}) as Record<string, Record<string, Cell>>;
   const names = (data.names ?? {}) as Record<string, string>;
@@ -50,7 +51,7 @@ export function EnvironmentForm({ initial, done, prompts, next }: { initial: Jso
       <AiPanel scene="environment" prompt={prompts.environment} note={ai.environment} onChange={(n) => set("ai", { ...ai, environment: n })} />
       <AiPanel scene="compare" prompt={prompts.compare} note={ai.compare} onChange={(n) => set("ai", { ...ai, compare: n })} />
       <TextArea id="decision_note" label="比較して分かったこと（あなたの評価）" sub="どの環境を選ぶかを今ここで決める必要はありません。判断材料を整理しましょう" value={data.decision_note} onChange={(v) => set("decision_note", v)} rows={4} />
-      <StepSaveBar step="environment" state={state} missing={missing} done={done} flushNow={flushNow} next={next} />
+      <StepSaveBar step="environment" sync={sync} missing={missing} done={done} next={next} />
     </>
   );
 }

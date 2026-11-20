@@ -2,7 +2,7 @@ import { requirePage } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime } from "@/components/ui";
 import { GOAL_LABEL, type Json } from "@/features/app02/logic";
-import { loadBlueprint, loadSteps, stepData, stepDone } from "@/features/app02/data";
+import { loadBlueprint, loadSteps, stepData, stepDone, stepInit } from "@/features/app02/data";
 import { scenePrompt, visionContext } from "@/features/app02/prompts";
 import { StepHeader, nextPath } from "@/features/app02/step-header";
 import { VisionForm } from "@/features/app02/forms/vision-form";
@@ -10,7 +10,7 @@ import { requireStarted } from "@/features/app02/guard";
 
 /** S02 人生ビジョン確認：APP01 の確定版を参照（元データは変更しない）。未連携なら暫定入力 */
 export default async function VisionPage() {
-  await requirePage({ kind: "app", code: "APP02" }, "/apps/APP02/vision");
+  const access = await requirePage({ kind: "app", code: "APP02" }, "/apps/APP02/vision");
   const supabase = await createClient();
   await requireStarted(supabase);
   const [steps, { bp, receivedAt }] = await Promise.all([loadSteps(supabase), loadBlueprint(supabase)]);
@@ -37,7 +37,7 @@ export default async function VisionPage() {
       ) : (
         <div className="notice info">APP01 の人生設計がまだ届いていません。APP01 を完成させて「APP02 へ進む」で引き継ぐか、下に暫定の人生ビジョンを入力して進めてください。</div>
       )}
-      <VisionForm initial={data} done={stepDone(steps, "vision")} hasBlueprint={Boolean(bp)} desires={bp?.priority_desires ?? []} next={nextPath("vision")}
+      <VisionForm initial={stepInit(steps, "vision", access.user_id!)} done={stepDone(steps, "vision")} hasBlueprint={Boolean(bp)} desires={bp?.priority_desires ?? []} next={nextPath("vision")}
         prompts={{ vision: scenePrompt("vision", { vision: ctx }), priority: scenePrompt("priority", { vision: ctx }) }} />
     </>
   );
