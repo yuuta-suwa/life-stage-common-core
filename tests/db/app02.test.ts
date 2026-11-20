@@ -105,9 +105,10 @@ describe("APP02 10ヵ年計画（60セル）", () => {
     const hist = await selectAs<{ kind: string; reason: string | null }>(u.id, "select kind, reason from public.app02_plan_history order by id", [], "aal1");
     expect(hist.map((h) => h.kind)).toEqual(["cell_edit", "cell_reset", "undo", "undo"]);
     expect(hist[0].reason).toBe("具体化");
-    // 履歴は改ざん・削除できない
+    // 履歴は改ざんできない
     await expectFail(sql("update public.app02_plan_history set reason = 'x' where user_id = $1", [u.id]), "HISTORY_IMMUTABLE");
-    await expectFail(sql("delete from public.app02_plan_history where user_id = $1", [u.id]), "HISTORY_IMMUTABLE");
+    // 本人は削除できない（DELETE 権限なし）。利用者そのものの削除（アカウント削除）では連鎖して消える
+    await expectFail(selectAs(u.id, "delete from public.app02_plan_history", [], "aal1"), /permission denied/);
   });
 
   it("推奨の再生成は本人の編集値を保持する", async () => {
