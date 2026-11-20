@@ -147,10 +147,31 @@ describe("アプリ固有ロール", () => {
     expect(actions).toEqual(["app_role.grant", "app_role.revoke"]);
   });
 
-  it("本人は自分のアプリ固有ロールを付与できない", async () => {
+  it("一般利用者・Admin は自分のアプリ固有ロールを付与できない", async () => {
     const u = await invitedUser(root.id, ["APP02"]);
     await expectFail(rpc(u.id, "admin_set_app_role", [u.id, "APP02", "legacy_eligible", true, "", null]), "FORBIDDEN");
-    await expectFail(rpc(root.id, "admin_set_app_role", [root.id, "APP02", "legacy_eligible", true, "", null]), "CANNOT_TARGET_SELF");
+    const admin = await invitedUser(root.id, ["APP03"], { role: "admin" });
+    await expectFail(rpc(admin.id, "admin_set_app_role", [admin.id, "APP03", "reviewer", true, "biz-self", null]), /CANNOT_TARGET_SELF|FORBIDDEN/);
+    await expectFail(rpc(admin.id, "admin_set_entitlement", [admin.id, "APP01", true, null]), "FORBIDDEN");
+    const list = await rpc<{ users: { id: string }[] }>(admin.id, "admin_list_users", [null, null, 200, 0]);
+    expect(list.users.some((x) => x.id === admin.id)).toBe(false);
+  });
+
+  it("Super Admin は自分のアプリ利用権限・アプリ固有ロール（LEGACY 資格）を設定でき、一覧に自分も表示される（0016）", async () => {
+    await rpc(root.id, "admin_set_entitlement", [root.id, "APP02", true, "自分で試用"]);
+    await rpc(root.id, "admin_set_app_role", [root.id, "APP02", "legacy_eligible", true, "", "自分で試用"]);
+    const [r] = await sql<{ n: number }>("select count(*)::int n from public.user_app_roles where user_id = $1 and role_code = 'legacy_eligible' and revoked_at is null", [root.id]);
+    expect(r.n).toBe(1);
+    const [a] = await sql<{ actor_id: string }>("select actor_id from public.audit_logs where target_user_id = $1 and action = 'app_role.grant' order by id desc limit 1", [root.id]);
+    expect(a.actor_id).toBe(root.id);
+    const list = await rpc<{ users: { id: string; is_self: boolean }[] }>(root.id, "admin_list_users", [null, null, 200, 0]);
+    expect(list.users[0].id).toBe(root.id);
+    expect(list.users[0].is_self).toBe(true);
+    // 安全のため、自分の利用状態・管理ロールの変更は引き続き拒否
+    await expectFail(rpc(root.id, "admin_set_user_status", [root.id, "suspend", null]), "CANNOT_TARGET_SELF");
+    await expectFail(rpc(root.id, "admin_set_role", [root.id, "super_admin", false, null]), "CANNOT_TARGET_SELF");
+    await rpc(root.id, "admin_set_app_role", [root.id, "APP02", "legacy_eligible", false, "", "後片付け"]);
+    await rpc(root.id, "admin_set_entitlement", [root.id, "APP02", false, "後片付け"]);
   });
 });
 

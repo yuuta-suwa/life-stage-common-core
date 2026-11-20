@@ -41,6 +41,12 @@ export default async function UserDetail({ params, searchParams }: { params: Pro
         <Link href="/admin/users" className="btn ghost small">← 一覧へ</Link>
       </PageHeader>
       <Flash ok={sp.ok} error={sp.error} />
+      {self ? (
+        <div className="notice info">
+          ご自身のアカウントです。アプリ別権限とアプリ固有の役割（APP02 の LEGACY 資格など）は設定できます。安全のため、利用状態・管理ロールの変更と削除手続きは、ご自身ではできません（別の Super Admin が操作します）。
+          <span className="en">This is your own account.</span>
+        </div>
+      ) : null}
 
       <div className="grid two">
         <div className="card">
@@ -143,7 +149,7 @@ export default async function UserDetail({ params, searchParams }: { params: Pro
                       <td>{r.app_code}</td><td>{def ? `${def.name_ja}（${def.name_en}）` : r.role_code}</td>
                       <td>{r.scope_key || "—"}</td><td className="small">{formatDateTime(r.granted_at)}</td>
                       <td className="actions">
-                        {!self ? (
+                        {!self || superAdmin ? (
                           <form action={setAppRole}>
                             <input type="hidden" name="user_id" value={id} /><input type="hidden" name="app_code" value={r.app_code} />
                             <input type="hidden" name="role_code" value={r.role_code} /><input type="hidden" name="scope_key" value={r.scope_key} />
@@ -159,7 +165,7 @@ export default async function UserDetail({ params, searchParams }: { params: Pro
             </table>
           </div>
         ) : <p className="muted">付与されているアプリ固有の役割はありません。</p>}
-        {!self && (roleDefs ?? []).length ? (
+        {(!self || superAdmin) && (roleDefs ?? []).length ? (
           <form action={setAppRole} className="row">
             <input type="hidden" name="user_id" value={id} />
             <input type="hidden" name="grant" value="true" />

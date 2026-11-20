@@ -3,7 +3,7 @@ import { requirePage } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { Flash, PageHeader, RoleBadges, StatusBadge, formatDateTime } from "@/components/ui";
 
-type UserRow = { id: string; email: string; display_name: string; status: string; created_at: string; apps: string[]; roles: string[] };
+type UserRow = { id: string; email: string; display_name: string; status: string; created_at: string; apps: string[]; roles: string[]; is_self?: boolean };
 
 export default async function UsersPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; page?: string; ok?: string; error?: string }> }) {
   await requirePage({ kind: "admin" }, "/admin/users");
@@ -46,7 +46,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                <td><b>{u.display_name || "（未設定）"}</b><div className="muted small">{u.email}</div></td>
+                <td><b>{u.display_name || "（未設定）"}</b>{u.is_self ? <span className="badge gold" style={{ marginLeft: 8 }}>あなた</span> : null}<div className="muted small">{u.email}</div></td>
                 <td><StatusBadge status={u.status} /></td>
                 <td><span className="chips">{u.apps.length ? u.apps.map((a) => <span key={a} className="badge gold">{a}</span>) : <span className="muted small">なし</span>}</span></td>
                 <td><RoleBadges roles={u.roles} /></td>

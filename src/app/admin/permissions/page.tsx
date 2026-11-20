@@ -5,7 +5,7 @@ import { Flash, PageHeader, RoleBadges, StatusBadge } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { setEntitlement } from "../actions";
 
-type UserRow = { id: string; email: string; display_name: string; status: string; apps: string[]; roles: string[] };
+type UserRow = { id: string; email: string; display_name: string; status: string; apps: string[]; roles: string[]; is_self?: boolean };
 
 /** 利用者 × アプリの権限マトリクス（ワンクリックで付与・取消。すべて監査記録） */
 export default async function PermissionsPage({ searchParams }: { searchParams: Promise<{ q?: string; ok?: string; error?: string }> }) {
@@ -38,7 +38,7 @@ export default async function PermissionsPage({ searchParams }: { searchParams: 
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
-                <td><Link href={`/admin/users/${u.id}`}><b>{u.display_name || "（未設定）"}</b></Link><div className="small muted">{u.email}</div></td>
+                <td><Link href={`/admin/users/${u.id}`}><b>{u.display_name || "（未設定）"}</b></Link>{u.is_self ? <span className="badge gold" style={{ marginLeft: 8 }}>あなた</span> : null}<div className="small muted">{u.email}</div></td>
                 <td><StatusBadge status={u.status} /></td>
                 <td><RoleBadges roles={u.roles} /></td>
                 {(apps ?? []).map((a) => {

@@ -1,5 +1,10 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-20 (6) Super Admin の自己設定（D-54）
+- migration 0016：`admin_list_users` が Super Admin には自分も返す（is_self）。`admin_set_app_role` は Super Admin に限り自分を対象にできる。
+- 管理画面：USERS・PERMISSIONS に自分の行（「あなた」）を表示。自分の詳細画面でアプリ別権限・アプリ固有ロールを設定可（状態・管理ロール・削除は不可の案内を表示）。
+- テスト：Super Admin の自己付与成功・自分の停止／ロール変更は拒否・Admin の自己付与と自分の表示は拒否。unit+DB 163 件合格。
+
 ## 2026-11-20 (5) APP03 1.0.9 連携表示と本物の Worker での結合試験
 - APP03 ソースを改修（表示専用の src/linked.js、ホーム・マップ・マス詳細に APP01／APP02 の内容を表示）し ZIP で納品。APP03 側試験 58/58、verify_restart PASS。
 - `tests/e2e/app03-real-worker.e2e.mjs` 追加：APP03 本物の Worker から共通基盤を呼ぶ結合試験 3/3 合格。
