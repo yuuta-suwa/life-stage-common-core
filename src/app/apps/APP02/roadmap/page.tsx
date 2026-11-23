@@ -10,6 +10,8 @@ import { StepHeader } from "@/features/app02/step-header";
 import { RoadmapGrid } from "@/features/app02/roadmap";
 import { AiPanel } from "@/features/app02/ui";
 import { requireStarted } from "@/features/app02/guard";
+import { ReviewPromptPanel } from "@/components/review-prompt-panel";
+import { buildReviewPrompt } from "@/lib/review-prompt";
 import { changeStartYear, createPlan, regeneratePlan, setFocus, undoLast } from "../actions";
 
 const OK: Record<string, string> = {
@@ -101,6 +103,14 @@ export default async function RoadmapPage({ searchParams }: { searchParams: Prom
       </section>
 
       <AiPanel scene="roadmap" prompt={scenePrompt("roadmap", { vision: ctx, detail: `現在地（暫定）：${ABILITY_CODES.map((a) => `${abilityName(a, ws.mode)} LV${current[a]}`).join("、")}` })} />
+      <ReviewPromptPanel prompt={buildReviewPrompt({
+        app: "APP02 SELF-REALIZATION ENGINE", title: "STEP 6 10ヵ年計画",
+        purpose: "6つの能力を、現在地から10年分の成長計画にする",
+        items: [{ label: "私の人生ビジョン", value: ctx }, ...ABILITY_CODES.map((a) => ({
+          label: `${abilityName(a, ws.mode)}の10年の目標`,
+          value: cells.filter((c) => c.ability === a).sort((x, y) => x.year_index - y.year_index).map((c) => `${calendarYear(plan.start_year, c.year_index)}年：${cellText(c)}（LV${cellLevel(c)}）`).join("\n"),
+        }))],
+      })} />
       <AiPanel scene="consistency" prompt={scenePrompt("consistency", { vision: ctx, detail: summary })} />
       <AiPanel scene="change" prompt={scenePrompt("change", { vision: ctx, detail: `（変更したい目標を書き足してください）\n現在の計画：\n${summary}` })} />
     </>

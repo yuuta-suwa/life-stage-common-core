@@ -7,6 +7,9 @@ import { completeStep, saveStep } from "@/app/apps/APP02/actions";
 import type { Json } from "./logic";
 import { SCENE_LABEL, type Scene } from "./prompts";
 import { ReportButton } from "./report-button";
+import { ReviewPromptPanel } from "@/components/review-prompt-panel";
+import { buildReviewPrompt, valueToText } from "@/lib/review-prompt";
+import { ANALYSIS, STEPS } from "./logic";
 
 type SaveState = "idle" | "saving" | "saved" | "error" | "offline" | "conflict";
 type Server = { data: Json; updatedAt: string | null };
@@ -141,7 +144,22 @@ const FIELD_LABEL: Record<string, string> = {
   attraction: "集客力", recruitment: "採用力", education: "教育力", development: "育成力", operations: "運営力", management: "経営力",
   grid: "比較表", names: "候補の名前", decision_note: "比較して分かったこと", policy: "成長方針", statement: "コミット", decided: "意思の確認",
   sections: "プレゼンの各セクション", approved: "内容の確認", ai: "ChatGPT の提案メモ", rungs: "ラダーの各段階", prerequisites: "前提条件", note: "メモ",
+  yes: "経験の質問への回答（はい／いいえ）", unsure: "分からない", evidence: "根拠となる経験", override: "自己申告のレベル", override_reason: "その理由",
 };
+
+const STEP_TITLE: Record<string, string> = {
+  ...Object.fromEntries(STEPS.map((s) => [s.code, `STEP ${s.no} ${s.ja}`])),
+  [ANALYSIS.code]: ANALYSIS.ja,
+  ladder: "経営者志望ラダー",
+};
+
+/** APP02 のステップ入力（表示中の内容）から、分析・評価・改善提案の相談文を作る。保存・変更はしない */
+export function stepReviewPrompt(step: string, data: Json): string {
+  const items = Object.entries(data)
+    .filter(([k]) => !k.startsWith("__") && k !== "ai")
+    .map(([k, v]) => ({ label: FIELD_LABEL[k] ?? k, value: valueToText(v, FIELD_LABEL) }));
+  return buildReviewPrompt({ app: "APP02 SELF-REALIZATION ENGINE", title: STEP_TITLE[step] ?? step, items });
+}
 
 /** 競合時の差分確認（項目ごとに、この画面の内容とサーバーの内容を並べる） */
 function ConflictPanel({ sync }: { sync: StepSync }) {
@@ -203,6 +221,7 @@ export function StepSaveBar({ step, sync, missing, done, next }: {
   }
   return (
     <>
+      <ReviewPromptPanel prompt={stepReviewPrompt(step, sync.data as Json)} />
       {sync.local ? <LocalPanel sync={sync} /> : null}
       {sync.conflict ? <ConflictPanel sync={sync} /> : null}
       <div className="save-bar no-print" role="status" aria-live="polite">

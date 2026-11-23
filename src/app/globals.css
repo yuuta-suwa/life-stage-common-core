@@ -255,6 +255,9 @@ dl.answers dd { margin: 2px 0 0; white-space: pre-wrap; word-break: break-word; 
 .grid.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 760px) { .grid.two { grid-template-columns: 1fr; } }
 .ai-panel summary, .vision-guide summary { cursor: pointer; }
+.review-panel { border-color: #e6d6b5; background: var(--gold-soft); }
+.review-preview { white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto; font-size: 12.5px; background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin: 8px 0 0; }
+.ai-note { margin: 6px 0 0; }
 .analysis-row .chain { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 @media (max-width: 1024px) { .analysis-row .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .analysis-row .chain { grid-template-columns: 1fr; } }

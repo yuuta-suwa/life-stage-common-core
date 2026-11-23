@@ -6,6 +6,8 @@ import { messageFor } from "@/lib/errors";
 import { confirmStage, saveDraft } from "@/app/apps/APP01/actions";
 import { COPY } from "./copy";
 import { VisionChatGptGuide } from "./vision-guide";
+import { ReviewPromptPanel } from "@/components/review-prompt-panel";
+import { stageHasSensitive, stageReviewPrompt } from "./review";
 import type { StageDef, StageInput } from "./stages";
 import { BUDGET_ASSUMPTION, budgetSummary, hasAnyAnswer, visionImages, yenText, type Answers, type StageState, type VisionImage } from "./logic";
 
@@ -133,13 +135,10 @@ export function StageForm(props: {
         </div>
       ) : null}
 
-      <div className="card ai-card">
-        <button type="button" className="btn ghost" disabled>{COPY.aiCta}</button>
-        <p className="small muted" style={{ margin: "8px 0 0" }}>
-          AI 精査は現在利用できません（有料の AI は導入していません）。内容をご自身で確認し、そのまま確定できます。
-          <br />{COPY.aiNotice}
-        </p>
-      </div>
+      <ReviewPromptPanel make={(inc) => stageReviewPrompt(stage, answers, inc)} hasSensitive={stageHasSensitive(stage)} />
+      <p className="small muted ai-note">
+        アプリ内の AI 精査はありません（有料の AI は導入していません）。上のボタンから、ご自身の ChatGPT で分析・評価・改善提案を受けられます。{COPY.aiNotice}
+      </p>
 
       <div className="save-bar no-print" role="status" aria-live="polite">
         <span className={`save-state ${saveState}`}>

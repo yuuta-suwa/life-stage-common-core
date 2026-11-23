@@ -1,5 +1,10 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-23 (9) ChatGPT 分析・評価・改善提案ボタン（D-57）
+- 共通：`src/lib/review-prompt.ts`（相談文の生成）、`src/components/review-prompt-panel.tsx`（コピー・ChatGPT を開く・相談文の確認・機微項目の任意追加）。
+- APP01：`src/features/app01/review.ts`、各 LEVEL（ビジョンボード含む）に表示。APP02：`StepSaveBar` に組み込み全 STEP、10ヵ年計画にも表示。
+- DB・保存処理の変更なし。テスト：単体 170 件、E2E review-prompt 5/5（コピー前後で保存データ不変を確認）、APP01 34/34・APP02 19/19・APP02 Phase2 13/13 の回帰合格。
+
 ## 2026-11-20 (8) 外部サイトのアプリへのリンク（D-56）
 - migration 0017：APP03・LIFE ACCOUNTING の URL を登録、LIFE ACCOUNTING を公開中に。`admin_set_app_link`（Super Admin・MFA・理由必須・監査）。開発 DB に適用済み。
 - 入口 `/apps/<code>`：権限確認後に登録 URL へ移動（権限なしは 403）。アカウント画面に「外部サイトに移動します」、設定画面に表示名・リンクの編集欄。
