@@ -1,6 +1,7 @@
 import { signInWithGoogle } from "@/app/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { safeNextPath } from "@/lib/paths";
+import { InAppNotice } from "@/components/in-app-notice";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const sp = await searchParams;
@@ -13,8 +14,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <p>招待されたメールアドレスの Google アカウントでログインしてください。</p>
       </section>
       <div className="card auth-card">
+        <InAppNotice path={`/login${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`} />
         {sp.error ? (
-          <div className="notice error">ログインできませんでした。もう一度お試しください。<span className="en">Sign-in failed.</span></div>
+          <div className="notice error">ログインできませんでした。もう一度お試しください。LINE などのアプリの中で開いている場合は、Safari／Chrome で開き直してください。<span className="en">Sign-in failed.</span></div>
         ) : null}
         <form action={signInWithGoogle}>
           <input type="hidden" name="next" value={next} />

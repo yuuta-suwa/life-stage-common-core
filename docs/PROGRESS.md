@@ -1,5 +1,10 @@
 # PROGRESS｜進捗報告
 
+## 2026-11-27 (10) ログイン不具合：LINE 内ブラウザ対策（D-58）
+- 原因：iPad の LINE アプリ内ブラウザ（UA: Safari Line/26.17.0）から Google ログインを開始し、Google がアプリ内ブラウザを拒否。共通基盤・Supabase・Google の設定は正常（前日に2名が通常ブラウザでログイン成功）。
+- 対策：`src/lib/in-app-browser.ts`（判定・LINE の外部ブラウザ URL）、`src/proxy.ts` で LINE を自動で外部ブラウザへ、`src/components/in-app-notice.tsx` をログイン・招待画面に表示。
+- テスト：単体 173 件、E2E in-app-browser 4/4。実機の LINE での確認は未実施。
+
 ## 2026-11-23 (9) ChatGPT 分析・評価・改善提案ボタン（D-57）
 - 共通：`src/lib/review-prompt.ts`（相談文の生成）、`src/components/review-prompt-panel.tsx`（コピー・ChatGPT を開く・相談文の確認・機微項目の任意追加）。
 - APP01：`src/features/app01/review.ts`、各 LEVEL（ビジョンボード含む）に表示。APP02：`StepSaveBar` に組み込み全 STEP、10ヵ年計画にも表示。

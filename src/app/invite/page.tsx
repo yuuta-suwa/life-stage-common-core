@@ -1,6 +1,7 @@
 import { getAccess } from "@/lib/access";
 import { acceptInviteNow, signOut, startInviteLogin } from "@/app/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
+import { InAppNotice } from "@/components/in-app-notice";
 
 /**
  * 招待リンクの着地点（/invite?token=...）。
@@ -17,6 +18,7 @@ export default async function InvitePage({ searchParams }: { searchParams: Promi
         <p>招待されたメールアドレスの Google アカウントで受諾してください。</p>
       </section>
       <div className="card auth-card">
+        {token && !access.authenticated ? <InAppNotice path={`/invite?token=${encodeURIComponent(token)}`} /> : null}
         {!token ? (
           <div className="notice error">招待リンクが正しくありません。<span className="en">Invalid invitation link.</span></div>
         ) : access.authenticated ? (
